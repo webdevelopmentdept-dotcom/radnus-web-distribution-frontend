@@ -32,3 +32,97 @@
 .fse-card-footer { padding: 12px 16px; border-top: 1px solid var(--border-subtle); display: flex; gap: 8px; background: var(--bg-surface); }
 .fse-stat       { flex: 1; text-align: center; }
 .fse-stat-lbl   { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+
+/* ─── Territory Mapping (mirrors mobile TerritoryMappingScreen) ─────────────── */
+.terr-state-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 14px; overflow: hidden;
+}
+
+.terr-state-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--bg-card);
+}
+
+.terr-expand-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-primary); font-family: var(--font-body); flex: 1; text-align: left;
+}
+
+.terr-state-name {
+  font-family: var(--font-head); font-size: 16px; font-weight: 700;
+  color: var(--text-primary);
+}
+
+.terr-delete-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--red); padding: 6px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; transition: var(--transition);
+}
+.terr-delete-btn:hover { background: var(--red-glow); }
+
+/* Districts */
+.terr-districts-wrap {
+  border-top: 3px solid var(--success);
+  background: var(--bg-surface);
+}
+
+.terr-district-block { border-bottom: 1px solid var(--border-subtle); }
+.terr-district-block:last-child { border-bottom: none; }
+
+.terr-district-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px 11px 28px; background: var(--bg-surface);
+}
+
+.terr-district-name {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+}
+
+/* Taluks */
+.terr-taluks-wrap { padding: 12px 16px 12px 36px; background: var(--bg-base); display: flex; flex-direction: column; gap: 12px; }
+
+.terr-taluk-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 8px;
+}
+
+.terr-taluk-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.terr-taluk-name {
+  font-size: 15px; font-weight: 700; color: var(--text-primary);
+}
+
+.terr-taluk-actions { display: flex; gap: 8px; align-items: center; }
+
+.terr-icon-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--red); padding: 4px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; transition: var(--transition);
+}
+.terr-icon-btn:hover { background: var(--red-glow); }
+.terr-icon-delete:hover { color: var(--red-bright); }
+
+.terr-assigned {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--success); font-weight: 500;
+}
+
+.terr-unassigned {
+  font-size: 13px; color: var(--red-bright); font-weight: 500;
+}
+
+.terr-beats-row { display: flex; flex-wrap: wrap; gap: 6px; min-height: 24px; }
+
+.terr-beat-chip {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 99px; padding: 3px 10px;
+  font-size: 12px; color: var(--text-secondary);
+}
+
+.terr-no-beats { font-size: 12px; color: var(--text-muted); }
+
+.terr-btn-row { display: flex; gap: 10px; margin-top: 4px; }
