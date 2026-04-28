@@ -5,6 +5,7 @@ npm-debug.log
 # Environment variables
 .env
 .env.development
+.env.production
 
 # Build files
 dist/

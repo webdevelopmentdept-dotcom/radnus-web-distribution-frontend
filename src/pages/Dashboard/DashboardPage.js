@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, Package, Store, Truck, Users, UserCheck, Map,
-  IndianRupee, Calendar, Timer, AlertCircle, ShoppingCart, Star
+  IndianRupee, Calendar, Timer, AlertCircle, ShoppingCart, Star,
+  Coins, TrendingDown, FileText, Plus, ClipboardList
 } from 'lucide-react';
 import { StatCard, SectionHeader, Badge, Avatar, PageLoader } from '../../components/ui/UI';
 import { fetchProducts } from '../../services/features/products/productSlice';
@@ -13,6 +14,7 @@ import { getManagers } from '../../services/features/manager/managerSlice';
 import { getExecutives } from '../../services/features/executive/executiveSlice';
 import { fetchFSE } from '../../services/features/fse/fseSlice';
 import { selectAuthState } from '../../store/selectors/authSelector';
+import api from '../../services/API/api';
 import './Dashboard.css';
 
 /* ─── Mini bar chart ─────────────────────────────────────────────────────────── */
@@ -59,7 +61,272 @@ const RecentTable = ({ title, rows, columns }) => (
   </div>
 );
 
-/* ═══ Dashboard ══════════════════════════════════════════════════════════════════ */
+/* ─── Helper functions (unchanged from mobile EmployeeDashboard) ─────────────── */
+const getNum = (obj, key, fallback = 0) => {
+  if (obj[key] !== undefined && obj[key] !== null) {
+    const val = Number(obj[key]);
+    if (!isNaN(val)) return val;
+  }
+  const spacedKey = key + ' ';
+  if (obj[spacedKey] !== undefined && obj[spacedKey] !== null) {
+    const val = Number(obj[spacedKey]);
+    if (!isNaN(val)) return val;
+  }
+  return fallback;
+};
+
+const getId = obj => {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj;
+  if (obj.$oid) return obj.$oid;
+  if (obj._id) return getId(obj._id);
+  return obj;
+};
+
+const parseDate = dateValue => {
+  if (!dateValue) return new Date();
+  if (dateValue instanceof Date && !isNaN(dateValue)) return dateValue;
+  if (typeof dateValue === 'string') {
+    const parsed = new Date(dateValue);
+    return !isNaN(parsed) ? parsed : new Date();
+  }
+  if (typeof dateValue === 'object' && dateValue.$date) {
+    const parsed = new Date(dateValue.$date);
+    return !isNaN(parsed) ? parsed : new Date();
+  }
+  return new Date();
+};
+
+const isSameDay = (d1, d2) =>
+  d1.getDate() === d2.getDate() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getFullYear() === d2.getFullYear();
+
+/* ─── Radnus Employee Dashboard (replaces Admin/Radnus block) ───────────────── */
+const RadnusDashboard = () => {
+  const navigate = useNavigate();
+  const user = useSelector(state => state.auth.user);
+  const products = useSelector(s => s.products.list);
+
+  const [todaySales, setTodaySales] = useState(0);
+  const [todaySalesLoading, setTodaySalesLoading] = useState(true);
+  const [totalItemCostValue, setTotalItemCostValue] = useState(0);
+  const [itemCostLoading, setItemCostLoading] = useState(true);
+  const [totalInward, setTotalInward] = useState(0);
+  const [totalOutward, setTotalOutward] = useState(0);
+  const [inwardOutwardLoading, setInwardOutwardLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchTodaySales = useCallback(async () => {
+    setTodaySalesLoading(true);
+    try {
+      const response = await api.get(
+        `/api/invoices?filter=today&billerName=${user?.name || ''}`,
+      );
+      const invoices = response.data || [];
+      const total = invoices
+        .filter(inv => inv?.status === 'completed')
+        .reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+      setTodaySales(total);
+    } catch (error) {
+      console.error("Failed to fetch today's sales:", error);
+      setTodaySales(0);
+    } finally {
+      setTodaySalesLoading(false);
+    }
+  }, [user?.name]);
+
+  const computeStockAndMovements = useCallback(async () => {
+    if (products.length === 0) return;
+    setItemCostLoading(true);
+    setInwardOutwardLoading(true);
+    try {
+      const response = await api.get('/api/invoices?filter=all');
+      const allInvoices = (response.data || []).filter(
+        inv => inv.status !== 'draft',
+      );
+      const today = new Date();
+
+      let todayInward = 0;
+      let todayOutward = 0;
+      const stockMap = {};
+
+      products.forEach(product => {
+        const pid = getId(product._id);
+        const moq = getNum(product, 'moq') || 0;
+        const stock = getNum(product, 'stock') || moq;
+        const walkinPrice = getNum(product, 'walkinPrice');
+        const itemCost = getNum(product, 'itemCost');
+        const createdAt = parseDate(product.createdAt);
+        if (isSameDay(createdAt, today)) {
+          todayInward += moq;
+        }
+        stockMap[pid] = {
+          currentStock: stock,
+          walkinPrice: walkinPrice,
+          itemCost: itemCost,
+        };
+      });
+
+      allInvoices.forEach(invoice => {
+        const invDate = parseDate(invoice.createdAt);
+        const isToday = isSameDay(invDate, today);
+        (invoice.items || []).forEach(item => {
+          const qty = getNum(item, 'qty');
+          if (isToday) {
+            todayOutward += qty;
+          }
+          const pid = getId(item.productId);
+          if (stockMap[pid]) {
+            stockMap[pid].currentStock -= qty;
+          }
+        });
+      });
+
+      let totalCost = 0;
+      Object.values(stockMap).forEach(item => {
+        const current = item.currentStock || 0;
+        const cost = current * (item.itemCost || 0);
+        totalCost += isNaN(cost) ? 0 : cost;
+      });
+
+      setTotalItemCostValue(totalCost);
+      setTotalInward(todayInward);
+      setTotalOutward(todayOutward);
+    } catch (error) {
+      console.error('Failed to compute data:', error);
+      setTotalItemCostValue(0);
+      setTotalInward(0);
+      setTotalOutward(0);
+    } finally {
+      setItemCostLoading(false);
+      setInwardOutwardLoading(false);
+    }
+  }, [products]);
+
+  useEffect(() => {
+    fetchTodaySales();
+    computeStockAndMovements();
+  }, [fetchTodaySales, computeStockAndMovements]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([fetchTodaySales(), computeStockAndMovements()]);
+    setRefreshing(false);
+  };
+
+  return (
+    <div className="dashboard">
+      <div className="dash-welcome">
+        <Avatar name={user?.name || 'R'} size="lg" />
+        <div>
+          <h2 className="dash-greeting">Welcome, {user?.name || 'User'}</h2>
+          <p className="dash-sub">Business Overview</p>
+        </div>
+      </div>
+
+      {/* KPI cards */}
+      <div className="stats-grid">
+        <StatCard
+          icon={<IndianRupee size={20} />}
+          label="Today Sales"
+          value={todaySalesLoading ? '...' : `₹${todaySales.toLocaleString('en-IN')}`}
+          accent="green"
+          onClick={() => navigate('/invoices', { state: { filter: 'today' } })}
+        />
+        <StatCard
+          icon={<Coins size={20} />}
+          label="Item Cost Total"
+          value={itemCostLoading ? '...' : `₹${Math.round(totalItemCostValue).toLocaleString('en-IN')}`}
+          accent="yellow"
+          onClick={() => navigate('/stock-visibility')}
+        />
+        <StatCard
+          icon={<TrendingUp size={20} />}
+          label="Inward (Today)"
+          value={inwardOutwardLoading ? '...' : `${totalInward} units`}
+          accent="green"
+          onClick={() => navigate('/central-stock')}
+        />
+        <StatCard
+          icon={<TrendingDown size={20} />}
+          label="Outward (Today)"
+          value={inwardOutwardLoading ? '...' : `${totalOutward} units`}
+          accent="red"
+          onClick={() => navigate('/invoices', { state: { filter: 'today' } })}
+        />
+      </div>
+
+      {/* Quick actions */}
+      <SectionHeader title="Quick Actions" />
+      <div className="actions-list">
+        <ActionCard
+          icon={Users}
+          title="Customer Details"
+          sub="View and manage customers"
+          accent="blue"
+          onClick={() => navigate('/customers')}
+        />
+        <ActionCard
+          icon={ClipboardList}
+          title="Invoice History"
+          sub="All past invoices"
+          accent="orange"
+          onClick={() => navigate('/invoices')}
+        />
+        <ActionCard
+          icon={Plus}
+          title="Product Master"
+          sub="Add or edit products"
+          accent="red"
+          onClick={() => navigate('/products')}
+        />
+        <ActionCard
+          icon={Package}
+          title="Stock Summary"
+          sub="Current stock levels"
+          accent="red"
+          onClick={() => navigate('/stock-visibility')}
+        />
+        <ActionCard
+          icon={ShoppingCart}
+          title="Order Cart"
+          sub="Create new order"
+          accent="green"
+          onClick={() => navigate('/order-cart')}
+        />
+        <ActionCard
+          icon={FileText}
+          title="Central Stock"
+          sub="Central stock overview"
+          accent="purple"
+          onClick={() => navigate('/central-stock')}
+        />
+        <ActionCard
+          icon={IndianRupee}
+          title="Order Billing"
+          sub="Generate invoice"
+          accent="yellow"
+          onClick={() => navigate('/order-cart')}  // adjust as needed
+        />
+      </div>
+
+      {/* Refresh button */}
+      <div style={{ marginTop: 24, textAlign: 'center' }}>
+        <button
+          className="auth-link"
+          onClick={handleRefresh}
+          disabled={refreshing}
+          style={{ opacity: refreshing ? 0.6 : 1 }}
+        >
+          {refreshing ? 'Refreshing…' : 'Refresh Data'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ═══ Dashboard Page (role‑based entry) ════════════════════════════════════════ */
 const DashboardPage = () => {
   const dispatch  = useDispatch();
   const navigate  = useNavigate();
@@ -85,13 +352,13 @@ const DashboardPage = () => {
   const activeProducts     = products.filter(p => p.status === 'Active' || p.stock > 0).length;
   const lowStock           = products.filter(p => p.stock < 20 && p.stock > 0).length;
 
-  // Months bar data (demo — replace with API response)
   const monthlyData = ['J','F','M','A','M','J','J','A','S','O','N','D'].map((l, i) => ({
     label: l, value: [28,42,35,68,55,72,65,88,74,90,78,95][i],
   }));
 
-  /* ─── Admin / Radnus Dashboard ──────────────────────────────────────────────── */
-  if (role === 'Admin' || role === 'Radnus') return (
+  if (role === 'Radnus') return <RadnusDashboard />;
+
+  if (role === 'Admin') return (
     <div className="dashboard">
       <div className="dash-welcome">
         <Avatar name={user?.name || 'A'} size="lg" />
@@ -160,6 +427,8 @@ const DashboardPage = () => {
       )}
     </div>
   );
+
+  // ... rest of the role‑specific returns (Distributor, MarketingManager, etc.) remain exactly the same ...
 
   /* ─── Distributor Dashboard ─────────────────────────────────────────────────── */
   if (role === 'Distributor') return (

@@ -1,0 +1,236 @@
+/* .invoice-page {
+  padding: 2rem;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.invoice-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.back-btn, .print-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.print-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.invoice-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 1.5rem;
+  border: 2px solid #000;
+}
+
+.invoice-header {
+  text-align: center;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.invoice-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.two-columns {
+  display: flex;
+  border-bottom: 1px solid #000;
+}
+
+.col-left, .col-right {
+  width: 50%;
+  padding: 0.5rem;
+}
+
+.col-left {
+  border-right: 1px solid #000;
+}
+
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.meta-table td {
+  border: 1px solid #000;
+  padding: 0.25rem;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.items-table th, .items-table td {
+  border: 1px solid #000;
+  padding: 0.25rem;
+}
+
+.amount-words, .declaration {
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.signature {
+  display: flex;
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.sig-left {
+  width: 60%;
+}
+
+.sig-right {
+  width: 40%;
+  text-align: right;
+}
+
+.sig-line {
+  margin-top: 2rem;
+  border-top: 1px solid #000;
+  width: 100%;
+}
+
+.footer {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+} */
+
+/* --------------------- */
+
+.invoice-page {
+  padding: 2rem;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.invoice-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.back-btn, .print-btn, .save-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.print-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.save-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.invoice-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 1.5rem;
+  border: 2px solid #000;
+}
+
+.invoice-header {
+  text-align: center;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.invoice-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.two-columns {
+  display: flex;
+  border-bottom: 1px solid #000;
+}
+
+.col-left, .col-right {
+  width: 50%;
+  padding: 0.5rem;
+}
+
+.col-left {
+  border-right: 1px solid #000;
+}
+
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.meta-table td {
+  border: 1px solid #000;
+  padding: 0.25rem;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.items-table th, .items-table td {
+  border: 1px solid #000;
+  padding: 0.25rem;
+}
+
+.amount-words, .declaration {
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.signature {
+  display: flex;
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.sig-left {
+  width: 60%;
+}
+
+.sig-right {
+  width: 40%;
+  text-align: right;
+}
+
+.sig-line {
+  margin-top: 2rem;
+  border-top: 1px solid #000;
+  width: 100%;
+}
+
+.footer {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+}

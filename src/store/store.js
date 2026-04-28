@@ -11,6 +11,8 @@ import territoryReducer    from '../services/features/Territory/TerritorySlice';
 import managerReducer      from '../services/features/manager/managerSlice';
 import executiveReducer    from '../services/features/executive/executiveSlice';
 import fseReducer          from '../services/features/fse/fseSlice';
+import customerReducer from '../services/features/customers/customerSlice';
+import invoiceReducer from '../services/features/invoice/invoiceSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,5 +27,7 @@ export const store = configureStore({
     manager:      managerReducer,
     executive:    executiveReducer,
     fse:          fseReducer,
+    customer: customerReducer,
+    invoice: invoiceReducer,
   },
 });

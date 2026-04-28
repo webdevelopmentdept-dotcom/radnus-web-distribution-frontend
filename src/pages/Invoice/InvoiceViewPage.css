@@ -1,0 +1,119 @@
+/* InvoiceViewPage.css */
+.invoice-view {
+  padding: 2rem;
+  min-height: 100vh;
+  background: var(--bg-primary, #f9fafb);
+  color: var(--text-primary);
+}
+
+.invoice-view.dark {
+  --bg-primary: #111827;
+  --card-bg: #1f2937;
+  --text-primary: #f3f4f6;
+  --border: #374151;
+}
+
+.invoice-view:not(.dark) {
+  --bg-primary: #f5f5f5;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --border: #e5e7eb;
+}
+
+.view-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  color: var(--accent, #d32f2f);
+  font-weight: 500;
+}
+
+.invoice-details {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.detail-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.label {
+  font-weight: 600;
+  width: 120px;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.items-table th,
+.items-table td {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.summary-row.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-bottom: none;
+  margin-top: 0.5rem;
+}
+
+.download-btn {
+  background: var(--accent, #d32f2f);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.download-btn:hover {
+  background: var(--accent-hover, #b71c1c);
+}
