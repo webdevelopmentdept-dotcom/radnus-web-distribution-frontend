@@ -1,200 +1,1083 @@
-import React, { useEffect, useState } from 'react';
+// // src/pages/Products/ProductsPage.jsx
+// import React, { useEffect, useState, useRef } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import {
+//   Plus,
+//   Search,
+//   Package,
+//   X,
+//   ImagePlus,
+//   Pencil,
+//   Trash2,
+// } from 'lucide-react';
+// import {
+//   fetchProducts,
+//   addProduct,
+//   updateProduct,
+//   deleteProduct,
+// } from '../../services/features/products/productSlice';
+// import { createActivityLog } from '../../services/features/activity/activitySlice';
+// import { selectAuthState } from '../../store/selectors/authSelector';
+// import {
+//   Button,
+//   Modal,
+//   Input,
+//   Select,
+//   toast,
+//   ConfirmDialog,
+//   Spinner,
+// } from '../../components/ui/UI';
+// import './Products.css';
+
+// /* ─── Category options (matching mobile) ─── */
+// const CAT_OPTS = [
+//   { value: '', label: 'Select Category' },
+//   { value: 'PD Chargers & Car Chargers', label: 'PD Chargers & Car Chargers' },
+//   { value: 'Charger', label: 'Charger' },
+//   { value: 'Data Cables', label: 'Data Cables' },
+//   { value: 'Handsfree', label: 'Handsfree' },
+//   { value: 'Bluetooth Neckband', label: 'Bluetooth Neckband' },
+//   { value: 'Ear Buds', label: 'Ear Buds' },
+//   { value: 'Speakers', label: 'Speakers' },
+//   { value: 'Radnus Battery', label: 'Radnus Battery' },
+// ];
+
+// const STATUS_OPTS = [
+//   { value: 'Active', label: 'Active' },
+//   { value: 'Inactive', label: 'Inactive' },
+// ];
+
+// /* ─── Validation (same logic as mobile Yup) ─── */
+// const validate = (fields) => {
+//   const errors = {};
+//   if (!fields.name.trim()) errors.name = 'Product name is required';
+//   if (!fields.category) errors.category = 'Category is required';
+//   if (!fields.sku.trim()) errors.sku = 'SKU is required';
+//   if (!fields.mrp || isNaN(fields.mrp) || Number(fields.mrp) <= 0)
+//     errors.mrp = 'MRP must be a positive number';
+//   if (!fields.distributorPrice || isNaN(fields.distributorPrice) || Number(fields.distributorPrice) <= 0)
+//     errors.distributorPrice = 'Distributor price must be a positive number';
+//   if (!fields.retailerPrice || isNaN(fields.retailerPrice) || Number(fields.retailerPrice) <= 0)
+//     errors.retailerPrice = 'Retailer price must be a positive number';
+//   if (!fields.itemCost || isNaN(fields.itemCost) || Number(fields.itemCost) <= 0)
+//     errors.itemCost = 'Item cost must be a positive number';
+//   if (!fields.gst || isNaN(fields.gst) || Number(fields.gst) < 0)
+//     errors.gst = 'GST must be 0 or higher';
+//   if (!fields.moq || isNaN(fields.moq) || Number(fields.moq) <= 0)
+//     errors.moq = 'Stock must be a positive number';
+//   if (!fields.walkinPrice || isNaN(fields.walkinPrice) || Number(fields.walkinPrice) <= 0)
+//     errors.walkinPrice = 'Walk‑in price must be a positive number';
+//   if (!fields.batchNo.trim()) errors.batchNo = 'Batch number is required';
+//   if (!fields.rackNo.trim()) errors.rackNo = 'Rack number is required';
+//   if (!fields.vendorName.trim()) errors.vendorName = 'Vendor name is required';
+//   return errors;
+// };
+
+// /* ─── ProductFormModal (Add / Edit) ─── */
+// const ProductFormModal = ({ open, onClose, editProduct }) => {
+//   const isEdit = !!editProduct;
+//   const dispatch = useDispatch();
+//   const { user } = useSelector(selectAuthState);
+//   const fileInputRef = useRef();
+
+//   const emptyForm = {
+//     name: '',
+//     category: '',
+//     sku: '',
+//     batchNo: '',
+//     rackNo: '',
+//     vendorName: '',
+//     itemCost: '',
+//     distributorPrice: '',
+//     retailerPrice: '',
+//     walkinPrice: '',
+//     mrp: '',
+//     gst: '',
+//     moq: '',
+//     status: 'Active',
+//   };
+
+//   const [form, setForm] = useState(emptyForm);
+//   const [image, setImage] = useState(null);     // File object or null
+//   const [preview, setPreview] = useState(null); // preview URL
+//   const [errors, setErrors] = useState({});
+//   const [saving, setSaving] = useState(false);
+
+//   useEffect(() => {
+//     if (!open) return;
+//     if (editProduct) {
+//       const p = editProduct;
+//       setForm({
+//         name: p.name || '',
+//         category: p.category || '',
+//         sku: p.sku || '',
+//         batchNo: p.batchNo || '',
+//         rackNo: p.rackNo || '',
+//         vendorName: p.vendorName || '',
+//         itemCost: p.itemCost ?? '',
+//         distributorPrice: p.distributorPrice ?? '',
+//         retailerPrice: p.retailerPrice ?? '',
+//         walkinPrice: p.walkinPrice ?? '',
+//         mrp: p.mrp ?? '',
+//         gst: p.gst ?? '',
+//         moq: p.moq ?? '',
+//         status: p.status || 'Active',
+//       });
+//       // Show existing image as preview
+//       setPreview(typeof p.image === 'string' ? p.image : null);
+//       setImage(null);
+//     } else {
+//       setForm(emptyForm);
+//       setPreview(null);
+//       setImage(null);
+//     }
+//     setErrors({});
+//   }, [open, editProduct]);
+
+//   const handleChange = (field) => (e) =>
+//     setForm((f) => ({ ...f, [field]: e.target.value }));
+
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+//     setImage(file);
+//     setPreview(URL.createObjectURL(file));
+//   };
+
+//   const clearImage = () => {
+//     setImage(null);
+//     setPreview(null);
+//     if (fileInputRef.current) fileInputRef.current.value = '';
+//   };
+
+//   const handleSubmit = async () => {
+//     const errs = validate(form);
+//     setErrors(errs);
+//     if (Object.keys(errs).length > 0) {
+//       toast.error('Please fix the highlighted fields');
+//       return;
+//     }
+//     // Image required only for new product (mobile enforces this)
+//     if (!isEdit && !image) {
+//       toast.error('Product image is required');
+//       return;
+//     }
+
+//     setSaving(true);
+//     try {
+//       const fd = new FormData();
+//       // Append all form fields
+//       Object.entries(form).forEach(([key, val]) => {
+//         if (val !== '' && val !== null && val !== undefined) {
+//           fd.append(key, val);
+//         }
+//       });
+//       // Append image if new one selected
+//       if (image) {
+//         fd.append('image', image);
+//       }
+
+//       let result;
+//       if (isEdit) {
+//         result = await dispatch(
+//           updateProduct({ id: editProduct._id, formData: fd })
+//         ).unwrap();
+//         toast.success('Product updated');
+
+//         // Activity log for edit
+//         await dispatch(
+//           createActivityLog({
+//             action: 'EDIT_PRODUCT',
+//             productId: result._id,
+//             productName: result.name,
+//             user:
+//               user?.name || user?.fullName || user?.email || 'Unknown',
+//             role: user?.role || 'Radnus',
+//           })
+//         );
+//       } else {
+//         result = await dispatch(addProduct(fd)).unwrap();
+//         toast.success('Product added');
+
+//         // Activity log for add
+//         await dispatch(
+//           createActivityLog({
+//             action: 'ADD_PRODUCT',
+//             productId: result._id || result.id,
+//             productName: result.name,
+//             user:
+//               user?.name || user?.fullName || user?.email || 'Unknown',
+//             role: user?.role || 'Radnus',
+//             timestamp: new Date().toISOString(),
+//           })
+//         );
+//       }
+
+//       onClose();
+//     } catch (err) {
+//       toast.error(err?.message || 'Operation failed');
+//     } finally {
+//       setSaving(false);
+//     }
+//   };
+
+//   const input = (label, field, props = {}) => (
+//     <Input
+//       label={label}
+//       value={form[field]}
+//       onChange={handleChange(field)}
+//       error={errors[field]}
+//       {...props}
+//     />
+//   );
+
+//   return (
+//     <Modal
+//       open={open}
+//       onClose={onClose}
+//       title={isEdit ? 'Edit Product' : 'Add Product'}
+//       footer={
+//         <div className="prod-footer">
+//           <Button variant="ghost" onClick={onClose}>
+//             Cancel
+//           </Button>
+//           <Button
+//             variant="primary"
+//             loading={saving}
+//             onClick={handleSubmit}
+//           >
+//             {saving
+//               ? 'Saving...'
+//               : isEdit
+//               ? 'Update Product'
+//               : 'Save Product'}
+//           </Button>
+//         </div>
+//       }
+//     >
+//       <div className="prod-form">
+//         {/* Image */}
+//         <div className="field">
+//           <label className="field-label">
+//             Product Image {!isEdit && '*'}
+//           </label>
+//           <div className="img-upload">
+//             {preview ? (
+//               <div className="img-preview-wrap">
+//                 <img src={preview} alt="preview" className="img-preview" />
+//                 <button
+//                   type="button"
+//                   className="img-remove-btn"
+//                   onClick={clearImage}
+//                 >
+//                   <X size={16} />
+//                 </button>
+//               </div>
+//             ) : (
+//               <label className="img-upload-placeholder">
+//                 <ImagePlus size={32} color="#9e9e9e" />
+//                 <span>Tap to add image</span>
+//                 <input
+//                   type="file"
+//                   accept="image/*"
+//                   ref={fileInputRef}
+//                   onChange={handleFileChange}
+//                   style={{ display: 'none' }}
+//                 />
+//               </label>
+//             )}
+//           </div>
+//         </div>
+
+//         {input('Product Name *', 'name')}
+//         <Select
+//           label="Category *"
+//           options={CAT_OPTS}
+//           value={form.category}
+//           onChange={(e) => {
+//             setForm((f) => ({ ...f, category: e.target.value }));
+//             setErrors((e) => ({ ...e, category: undefined }));
+//           }}
+//           error={errors.category}
+//         />
+//         {input('SKU *', 'sku')}
+//         {input('Batch No *', 'batchNo')}
+//         {input('Rack No *', 'rackNo')}
+//         {input('Vendor Name *', 'vendorName')}
+//         {input('Item Cost (₹) *', 'itemCost', { type: 'number' })}
+//         <div className="form-row">
+//           {input('Distributor Price (₹) *', 'distributorPrice', {
+//             type: 'number',
+//           })}
+//           {input('Retailer Price (₹) *', 'retailerPrice', { type: 'number' })}
+//         </div>
+//         <div className="form-row">
+//           {input('Walk‑in Price (₹) *', 'walkinPrice', { type: 'number' })}
+//           {input('MRP (₹) *', 'mrp', { type: 'number' })}
+//         </div>
+//         <div className="form-row">
+//           {input('GST (%) *', 'gst', { type: 'number', step: '0.01' })}
+//           {input('Stock (Units) *', 'moq', { type: 'number' })}
+//         </div>
+//         <Select
+//           label="Status"
+//           options={STATUS_OPTS}
+//           value={form.status}
+//           onChange={(e) =>
+//             setForm((f) => ({ ...f, status: e.target.value }))
+//           }
+//         />
+//       </div>
+//     </Modal>
+//   );
+// };
+
+// /* ─── Product Card (web, matches mobile design) ─── */
+// const ProductCard = ({ product, onEdit, onDelete, role }) => {
+//   const canManage = ['Admin', 'Radnus'].includes(role);
+//   const outOfStock = (product.moq ?? 0) === 0;
+//   const lowStock = (product.moq ?? 0) > 0 && (product.moq ?? 0) < 20;
+
+//   return (
+//     <div className={`product-card ${outOfStock ? 'out-of-stock' : ''}`}>
+//       <div className="product-card-top">
+//         <div className="prod-img">
+//           {product.image ? (
+//             <img src={product.image} alt={product.name} />
+//           ) : (
+//             <div className="prod-img-placeholder">📦</div>
+//           )}
+//         </div>
+//         <div className="prod-info">
+//           <h3 className="prod-name">{product.name}</h3>
+//           <div className="prod-sku">SKU: {product.sku || '–'}</div>
+//           <div className="prod-vendor">Vendor: {product.vendorName || '–'}</div>
+//           <div
+//             className="prod-stock"
+//             style={{
+//               color: outOfStock ? 'var(--red-bright)' : 'var(--green-dark)',
+//             }}
+//           >
+//             Stock: {product.moq ?? 0}
+//           </div>
+//           <span className={`prod-status-badge ${product.status === 'Inactive' ? 'inactive' : ''}`}>
+//             {product.status || 'Active'}
+//           </span>
+//         </div>
+//         {canManage && (
+//           <div className="prod-actions">
+//             <button className="prod-action-btn" onClick={() => onEdit(product)}>
+//               <Pencil size={16} />
+//             </button>
+//             <button className="prod-action-btn" onClick={() => onDelete(product._id)}>
+//               <Trash2 size={16} />
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//       <div className="product-card-divider" />
+//       <div className="product-price-grid">
+//         <div className="price-item">
+//           <span className="price-lbl">Item Cost</span>
+//           <span className="price-val">₹{product.itemCost ?? 0}</span>
+//         </div>
+//         <div className="price-item">
+//           <span className="price-lbl">Distributor</span>
+//           <span className="price-val">₹{product.distributorPrice ?? 0}</span>
+//         </div>
+//         <div className="price-item">
+//           <span className="price-lbl">Retailer</span>
+//           <span className="price-val">₹{product.retailerPrice ?? 0}</span>
+//         </div>
+//         <div className="price-item">
+//           <span className="price-lbl">Walk‑in</span>
+//           <span className="price-val">₹{product.walkinPrice ?? 0}</span>
+//         </div>
+//         <div className="price-item">
+//           <span className="price-lbl">MRP</span>
+//           <span className="price-val">₹{product.mrp ?? 0}</span>
+//         </div>
+//         <div className="price-item">
+//           <span className="price-lbl">GST</span>
+//           <span className="price-val">{product.gst ?? 0}%</span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// /* ═══ Products Page ═══════════════════════════════════════════════════════════════ */
+// const ProductsPage = () => {
+//   const dispatch = useDispatch();
+//   const { role } = useSelector(selectAuthState);
+//   const { list: products, loading } = useSelector((s) => s.products);
+
+//   const [search, setSearch] = useState('');
+//   const [catFilter, setCatFilter] = useState('');
+//   const [modal, setModal] = useState(false);
+//   const [editTarget, setEditTarget] = useState(null);
+//   const [deleteId, setDeleteId] = useState(null);
+
+//   useEffect(() => {
+//     dispatch(fetchProducts());
+//   }, [dispatch]);
+
+//   // Search & filter
+//   const filtered = products.filter((p) => {
+//     const s = search.toLowerCase().trim();
+//     const matchSearch =
+//       !s ||
+//       (p.name || '').toLowerCase().includes(s) ||
+//       (p.sku || '').toLowerCase().includes(s);
+//     const matchCat = !catFilter || p.category === catFilter;
+//     return matchSearch && matchCat;
+//   });
+
+//   const handleDelete = async (id) => {
+//     await dispatch(deleteProduct(id)).unwrap();
+//     toast.success('Product deleted');
+//   };
+
+//   const openAdd = () => {
+//     setEditTarget(null);
+//     setModal(true);
+//   };
+//   const openEdit = (p) => {
+//     setEditTarget(p);
+//     setModal(true);
+//   };
+
+//   const categories = [
+//     '',
+//     ...new Set(products.map((p) => p.category).filter(Boolean)),
+//   ];
+
+//   return (
+//     <div>
+//       <div className="section-header">
+//         <div>
+//           <h2 className="section-title">Product Catalog</h2>
+//           <span className="section-count">{filtered.length} products</span>
+//         </div>
+//         {['Admin', 'Radnus'].includes(role) && (
+//           <Button variant="primary" size="sm" onClick={openAdd}>
+//             <Plus size={16} /> Add Product
+//           </Button>
+//         )}
+//       </div>
+
+//       <div className="products-toolbar">
+//         <div className="dtable-search" style={{ maxWidth: 320 }}>
+//           <Search size={16} />
+//           <input
+//             value={search}
+//             onChange={(e) => setSearch(e.target.value)}
+//             placeholder="Search by name or SKU…"
+//           />
+//         </div>
+//         <select
+//           className="field-select"
+//           value={catFilter}
+//           onChange={(e) => setCatFilter(e.target.value)}
+//           style={{ width: 'auto', padding: '8px 32px 8px 12px' }}
+//         >
+//           <option value="">All Categories</option>
+//           {categories.slice(1).map((c) => (
+//             <option key={c} value={c}>
+//               {c}
+//             </option>
+//           ))}
+//         </select>
+//       </div>
+
+//       {loading ? (
+//         <div className="loading-center">
+//           <Spinner size="lg" />
+//         </div>
+//       ) : filtered.length === 0 ? (
+//         <div className="empty-state">
+//           <Package size={40} />
+//           <p>No products found</p>
+//           {['Admin', 'Radnus'].includes(role) && (
+//             <Button variant="primary" size="sm" onClick={openAdd}>
+//               Add Product
+//             </Button>
+//           )}
+//         </div>
+//       ) : (
+//         <div className="products-grid">
+//           {filtered.map((p) => (
+//             <ProductCard
+//               key={p._id}
+//               product={p}
+//               role={role}
+//               onEdit={openEdit}
+//               onDelete={(id) => setDeleteId(id)}
+//             />
+//           ))}
+//         </div>
+//       )}
+
+//       <ProductFormModal
+//         open={modal}
+//         onClose={() => {
+//           setModal(false);
+//           setEditTarget(null);
+//         }}
+//         editProduct={editTarget}
+//       />
+
+//       <ConfirmDialog
+//         open={!!deleteId}
+//         onClose={() => setDeleteId(null)}
+//         onConfirm={() => handleDelete(deleteId)}
+//         title="Delete Product"
+//         message="Are you sure you want to delete this product? This action cannot be undone."
+//         confirmLabel="Delete"
+//       />
+//     </div>
+//   );
+// };
+
+// export default ProductsPage;
+
+// src/pages/Products/ProductsPage.jsx
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Package } from 'lucide-react';
-import { fetchProducts, addProduct, updateProduct, deleteProduct } from '../../services/features/products/productSlice';
+import {
+  Plus,
+  Search,
+  Package,
+  X,
+  ImagePlus,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
+import {
+  fetchProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from '../../services/features/products/productSlice';
+import { createActivityLog } from '../../services/features/activity/activitySlice';
 import { selectAuthState } from '../../store/selectors/authSelector';
-import { SectionHeader, Button, Badge, Modal, Input, Select, toast, EmptyState, ConfirmDialog, Spinner } from '../../components/ui/UI';
+import {
+  Button,
+  Modal,
+  Input,
+  Select,
+  toast,
+  ConfirmDialog,
+  Spinner,
+} from '../../components/ui/UI';
 import './Products.css';
 
-const CAT_EMOJI = { Oils: '🛢️', Cleaning: '🧴', 'Personal Care': '🧼', Food: '🥫', Beverages: '🥤', default: '📦' };
+/* ─── Category options (matching mobile) ─── */
+const CAT_OPTS = [
+  { value: '', label: 'Select Category' },
+  { value: 'PD Chargers & Car Chargers', label: 'PD Chargers & Car Chargers' },
+  { value: 'Charger', label: 'Charger' },
+  { value: 'Data Cables', label: 'Data Cables' },
+  { value: 'Handsfree', label: 'Handsfree' },
+  { value: 'Bluetooth Neckband', label: 'Bluetooth Neckband' },
+  { value: 'Ear Buds', label: 'Ear Buds' },
+  { value: 'Speakers', label: 'Speakers' },
+  { value: 'Radnus Battery', label: 'Radnus Battery' },
+];
 
-/* ─── Product Card ───────────────────────────────────────────────────────────── */
-const ProductCard = ({ product, role, onEdit, onDelete, onOrder }) => {
-  const showDist = ['Admin', 'Radnus', 'Distributor'].includes(role);
-  const outOfStock = product.stock === 0;
-  const lowStock   = product.stock > 0 && product.stock < 20;
+const STATUS_OPTS = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' },
+];
+
+/* ─── Validation (same logic as mobile Yup) ─── */
+const validate = (fields) => {
+  const errors = {};
+  if (!fields.name.trim()) errors.name = 'Product name is required';
+  if (!fields.category) errors.category = 'Category is required';
+  if (!fields.sku.trim()) errors.sku = 'SKU is required';
+  if (!fields.mrp || isNaN(fields.mrp) || Number(fields.mrp) <= 0)
+    errors.mrp = 'MRP must be a positive number';
+  if (!fields.distributorPrice || isNaN(fields.distributorPrice) || Number(fields.distributorPrice) <= 0)
+    errors.distributorPrice = 'Distributor price must be a positive number';
+  if (!fields.retailerPrice || isNaN(fields.retailerPrice) || Number(fields.retailerPrice) <= 0)
+    errors.retailerPrice = 'Retailer price must be a positive number';
+  if (!fields.itemCost || isNaN(fields.itemCost) || Number(fields.itemCost) <= 0)
+    errors.itemCost = 'Item cost must be a positive number';
+  if (!fields.gst || isNaN(fields.gst) || Number(fields.gst) < 0)
+    errors.gst = 'GST must be 0 or higher';
+  if (!fields.moq || isNaN(fields.moq) || Number(fields.moq) <= 0)
+    errors.moq = 'Stock must be a positive number';
+  if (!fields.walkinPrice || isNaN(fields.walkinPrice) || Number(fields.walkinPrice) <= 0)
+    errors.walkinPrice = 'Walk‑in price must be a positive number';
+  if (!fields.batchNo.trim()) errors.batchNo = 'Batch number is required';
+  if (!fields.rackNo.trim()) errors.rackNo = 'Rack number is required';
+  if (!fields.vendorName.trim()) errors.vendorName = 'Vendor name is required';
+  return errors;
+};
+
+/* ─── ProductFormModal (Add / Edit) ─── */
+const ProductFormModal = ({ open, onClose, editProduct }) => {
+  const isEdit = !!editProduct;
+  const dispatch = useDispatch();
+  const { user } = useSelector(selectAuthState);
+  const fileInputRef = useRef();
+
+  const emptyForm = {
+    name: '',
+    category: '',
+    sku: '',
+    batchNo: '',
+    rackNo: '',
+    vendorName: '',
+    itemCost: '',
+    distributorPrice: '',
+    retailerPrice: '',
+    walkinPrice: '',
+    mrp: '',
+    gst: '',
+    moq: '',
+    status: 'Active',
+  };
+
+  const [form, setForm] = useState(emptyForm);
+  const [image, setImage] = useState(null);     // File object or null
+  const [preview, setPreview] = useState(null); // preview URL
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    if (editProduct) {
+      const p = editProduct;
+      setForm({
+        name: p.name || '',
+        category: p.category || '',
+        sku: p.sku || '',
+        batchNo: p.batchNo || '',
+        rackNo: p.rackNo || '',
+        vendorName: p.vendorName || '',
+        itemCost: p.itemCost ?? '',
+        distributorPrice: p.distributorPrice ?? '',
+        retailerPrice: p.retailerPrice ?? '',
+        walkinPrice: p.walkinPrice ?? '',
+        mrp: p.mrp ?? '',
+        gst: p.gst ?? '',
+        moq: p.moq ?? '',
+        status: p.status || 'Active',
+      });
+      // Show existing image as preview
+      setPreview(typeof p.image === 'string' ? p.image : null);
+      setImage(null);
+    } else {
+      setForm(emptyForm);
+      setPreview(null);
+      setImage(null);
+    }
+    setErrors({});
+  }, [open, editProduct]);
+
+  const handleChange = (field) => (e) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    setImage(null);
+    setPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleSubmit = async () => {
+    const errs = validate(form);
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      toast.error('Please fix the highlighted fields');
+      return;
+    }
+    // Image required only for new product (mobile enforces this)
+    if (!isEdit && !image) {
+      toast.error('Product image is required');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const fd = new FormData();
+      // Append all form fields
+      Object.entries(form).forEach(([key, val]) => {
+        if (val !== '' && val !== null && val !== undefined) {
+          fd.append(key, val);
+        }
+      });
+      // Append image if new one selected
+      if (image) {
+        fd.append('image', image);
+      }
+
+      let result;
+      if (isEdit) {
+        result = await dispatch(
+          updateProduct({ id: editProduct._id, formData: fd })
+        ).unwrap();
+        toast.success('Product updated');
+
+        // Activity log for edit
+        await dispatch(
+          createActivityLog({
+            action: 'EDIT_PRODUCT',
+            productId: result._id,
+            productName: result.name,
+            user:
+              user?.name || user?.fullName || user?.email || 'Unknown',
+            role: user?.role || 'Radnus',
+          })
+        );
+      } else {
+        result = await dispatch(addProduct(fd)).unwrap();
+        toast.success('Product added');
+
+        // Activity log for add
+        await dispatch(
+          createActivityLog({
+            action: 'ADD_PRODUCT',
+            productId: result._id || result.id,
+            productName: result.name,
+            user:
+              user?.name || user?.fullName || user?.email || 'Unknown',
+            role: user?.role || 'Radnus',
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
+
+      onClose();
+    } catch (err) {
+      toast.error(err?.message || 'Operation failed');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const input = (label, field, props = {}) => (
+    <Input
+      label={label}
+      value={form[field]}
+      onChange={handleChange(field)}
+      error={errors[field]}
+      {...props}
+    />
+  );
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={isEdit ? 'Edit Product' : 'Add Product'}
+      footer={
+        <div className="prod-footer">
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            loading={saving}
+            onClick={handleSubmit}
+          >
+            {saving
+              ? 'Saving...'
+              : isEdit
+              ? 'Update Product'
+              : 'Save Product'}
+          </Button>
+        </div>
+      }
+    >
+      <div className="prod-form">
+        {/* Image */}
+        <div className="field">
+          <label className="field-label">
+            Product Image {!isEdit && '*'}
+          </label>
+          <div className="img-upload">
+            {preview ? (
+              <div className="img-preview-wrap">
+                <img src={preview} alt="preview" className="img-preview" />
+                <button
+                  type="button"
+                  className="img-remove-btn"
+                  onClick={clearImage}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <label className="img-upload-placeholder">
+                <ImagePlus size={32} color="#9e9e9e" />
+                <span>Tap to add image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
+          </div>
+        </div>
+
+        {input('Product Name *', 'name')}
+        <Select
+          label="Category *"
+          options={CAT_OPTS}
+          value={form.category}
+          onChange={(e) => {
+            setForm((f) => ({ ...f, category: e.target.value }));
+            setErrors((e) => ({ ...e, category: undefined }));
+          }}
+          error={errors.category}
+        />
+        {input('SKU *', 'sku')}
+        {input('Batch No *', 'batchNo')}
+        {input('Rack No *', 'rackNo')}
+        {input('Vendor Name *', 'vendorName')}
+        {input('Item Cost (₹) *', 'itemCost', { type: 'number' })}
+        <div className="form-row">
+          {input('Distributor Price (₹) *', 'distributorPrice', {
+            type: 'number',
+          })}
+          {input('Retailer Price (₹) *', 'retailerPrice', { type: 'number' })}
+        </div>
+        <div className="form-row">
+          {input('Walk‑in Price (₹) *', 'walkinPrice', { type: 'number' })}
+          {input('MRP (₹) *', 'mrp', { type: 'number' })}
+        </div>
+        <div className="form-row">
+          {input('GST (%) *', 'gst', { type: 'number', step: '0.01' })}
+          {input('Stock (Units) *', 'moq', { type: 'number' })}
+        </div>
+        <Select
+          label="Status"
+          options={STATUS_OPTS}
+          value={form.status}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, status: e.target.value }))
+          }
+        />
+      </div>
+    </Modal>
+  );
+};
+
+/* ─── Product Card (web, matches mobile design) ─── */
+const ProductCard = ({ product, onEdit, onDelete, role }) => {
+  const canManage = ['Admin', 'Radnus'].includes(role);
+  const outOfStock = (product.moq ?? 0) === 0;
+  const lowStock = (product.moq ?? 0) > 0 && (product.moq ?? 0) < 20;
 
   return (
     <div className={`product-card ${outOfStock ? 'out-of-stock' : ''}`}>
-      <div className="product-img">
-        {product.image
-          ? <img src={product.image} alt={product.name} />
-          : <span className="product-emoji">{CAT_EMOJI[product.category] || CAT_EMOJI.default}</span>
-        }
-        {outOfStock && <Badge variant="inactive" style={{ position: 'absolute', top: 10, right: 10 }}>Out of Stock</Badge>}
-        {lowStock   && <Badge variant="warning"  style={{ position: 'absolute', top: 10, right: 10 }}>Low Stock</Badge>}
-        {product.status === 'Inactive' && <div className="product-inactive-overlay">Inactive</div>}
-      </div>
-      <div className="product-body">
-        <div className="product-name">{product.name}</div>
-        <div className="product-cat">{product.category || 'General'}</div>
-        <div className="product-prices">
-          {showDist && (
-            <div className="price-box">
-              <span className="price-lbl">Dist</span>
-              <span className="price-val">₹{product.distributorPrice || 0}</span>
-            </div>
-          )}
-          <div className="price-box">
-            <span className="price-lbl">Retail</span>
-            <span className="price-val">₹{product.retailerPrice || 0}</span>
-          </div>
-        </div>
-        <div className="product-stock">
-          Stock: <strong style={{ color: outOfStock ? 'var(--red-bright)' : 'var(--text-primary)' }}>{product.stock || 0}</strong> units
-        </div>
-        <div className="product-actions">
-          {['Admin', 'Radnus'].includes(role) ? (
-            <>
-              <Button variant="outline" size="sm" fullWidth onClick={() => onEdit(product)}>Edit</Button>
-              <Button variant="danger"  size="sm"           onClick={() => onDelete(product._id)}>🗑</Button>
-            </>
+      <div className="product-card-top">
+        <div className="prod-img">
+          {product.image ? (
+            <img src={product.image} alt={product.name} />
           ) : (
-            <Button variant="primary" size="sm" fullWidth disabled={outOfStock} onClick={() => onOrder?.(product)}>
-              {outOfStock ? 'Out of Stock' : 'Add to Cart'}
-            </Button>
+            <div className="prod-img-placeholder">📦</div>
           )}
+        </div>
+        <div className="prod-info">
+          <h3 className="prod-name">{product.name}</h3>
+          <div className="prod-sku">SKU: {product.sku || '–'}</div>
+          <div className="prod-vendor">Vendor: {product.vendorName || '–'}</div>
+          <div
+            className="prod-stock"
+            style={{
+              color: outOfStock ? 'var(--red-bright)' : 'var(--green-dark)',
+            }}
+          >
+            Stock: {product.moq ?? 0}
+          </div>
+          <span className={`prod-status-badge ${product.status === 'Inactive' ? 'inactive' : ''}`}>
+            {product.status || 'Active'}
+          </span>
+        </div>
+        {canManage && (
+          <div className="prod-actions">
+            <button className="prod-action-btn" onClick={() => onEdit(product)}>
+              <Pencil size={16} />
+            </button>
+            <button className="prod-action-btn" onClick={() => onDelete(product._id)}>
+              <Trash2 size={16} />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="product-card-divider" />
+      <div className="product-price-grid">
+        <div className="price-item">
+          <span className="price-lbl">Item Cost</span>
+          <span className="price-val">₹{product.itemCost ?? 0}</span>
+        </div>
+        <div className="price-item">
+          <span className="price-lbl">Distributor</span>
+          <span className="price-val">₹{product.distributorPrice ?? 0}</span>
+        </div>
+        <div className="price-item">
+          <span className="price-lbl">Retailer</span>
+          <span className="price-val">₹{product.retailerPrice ?? 0}</span>
+        </div>
+        <div className="price-item">
+          <span className="price-lbl">Walk‑in</span>
+          <span className="price-val">₹{product.walkinPrice ?? 0}</span>
+        </div>
+        <div className="price-item">
+          <span className="price-lbl">MRP</span>
+          <span className="price-val">₹{product.mrp ?? 0}</span>
+        </div>
+        <div className="price-item">
+          <span className="price-lbl">GST</span>
+          <span className="price-val">{product.gst ?? 0}%</span>
         </div>
       </div>
     </div>
   );
 };
 
-/* ─── Add / Edit Modal ───────────────────────────────────────────────────────── */
-const ProductModal = ({ open, onClose, product, onSave }) => {
-  const [vals, setVals] = useState({ name: '', category: '', distributorPrice: '', retailerPrice: '', stock: '', status: 'Active', image: null });
-  const [errs, setErrs] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (product) setVals({ name: product.name || '', category: product.category || '', distributorPrice: product.distributorPrice || '', retailerPrice: product.retailerPrice || '', stock: product.stock || '', status: product.status || 'Active', image: null });
-    else setVals({ name: '', category: '', distributorPrice: '', retailerPrice: '', stock: '', status: 'Active', image: null });
-    setErrs({});
-  }, [product, open]);
-
-  const set = (k, v) => setVals(p => ({ ...p, [k]: v }));
-
-  const validate = () => {
-    const e = {};
-    if (!vals.name) e.name = 'Product name required';
-    if (!vals.retailerPrice) e.retailerPrice = 'Retailer price required';
-    setErrs(e); return !Object.keys(e).length;
-  };
-
-  const handleSave = async () => {
-    if (!validate()) return;
-    setLoading(true);
-    const fd = new FormData();
-    Object.entries(vals).forEach(([k, v]) => { if (v !== null && v !== '') fd.append(k, v); });
-    try { await onSave(fd, product?._id); onClose(); }
-    catch (e) { toast.error(e?.message || 'Save failed'); }
-    finally { setLoading(false); }
-  };
-
-  const STATUS_OPTS = [{ value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }];
-  const CAT_OPTS = [
-    { value: '', label: 'Select category' },
-    ...['Oils', 'Cleaning', 'Personal Care', 'Food', 'Beverages', 'Other'].map(c => ({ value: c, label: c })),
-  ];
-
-  return (
-    <Modal open={open} onClose={onClose} title={product ? 'Edit Product' : 'Add New Product'}
-      footer={<><Button variant="ghost" onClick={onClose}>Cancel</Button><Button variant="primary" loading={loading} onClick={handleSave}>{product ? 'Save Changes' : 'Add Product'}</Button></>}
-    >
-      <Input label="Product Name" placeholder="Enter product name" value={vals.name} onChange={e => set('name', e.target.value)} error={errs.name} />
-      <Select label="Category" options={CAT_OPTS} value={vals.category} onChange={e => set('category', e.target.value)} />
-      <div className="form-row">
-        <Input label="Distributor Price (₹)" type="number" placeholder="0" value={vals.distributorPrice} onChange={e => set('distributorPrice', e.target.value)} />
-        <Input label="Retailer Price (₹)"    type="number" placeholder="0" value={vals.retailerPrice}    onChange={e => set('retailerPrice',    e.target.value)} error={errs.retailerPrice} />
-      </div>
-      <div className="form-row">
-        <Input label="Stock (units)" type="number" placeholder="0" value={vals.stock} onChange={e => set('stock', e.target.value)} />
-        <Select label="Status" options={STATUS_OPTS} value={vals.status} onChange={e => set('status', e.target.value)} />
-      </div>
-      <div className="field">
-        <label className="field-label">Product Image</label>
-        <input type="file" accept="image/*" className="field-input" onChange={e => set('image', e.target.files[0])} />
-      </div>
-    </Modal>
-  );
-};
-
-/* ═══ Products Page ══════════════════════════════════════════════════════════════ */
+/* ═══ Products Page ═══════════════════════════════════════════════════════════════ */
 const ProductsPage = () => {
   const dispatch = useDispatch();
   const { role } = useSelector(selectAuthState);
-  const { list: products, loading } = useSelector(s => s.products);
+  const { list: products, loading } = useSelector((s) => s.products);
 
-  const [search,     setSearch]     = useState('');
-  const [catFilter,  setCatFilter]  = useState('');
-  const [modal,      setModal]      = useState(false);
+  const [search, setSearch] = useState('');
+  const [catFilter, setCatFilter] = useState('');
+  const [modal, setModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
-  const [deleteId,   setDeleteId]   = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
-  useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
-  const categories = ['', ...new Set(products.map(p => p.category).filter(Boolean))];
-
-  const filtered = products.filter(p => {
-    const matchSearch = !search    || p.name?.toLowerCase().includes(search.toLowerCase());
-    const matchCat    = !catFilter || p.category === catFilter;
+  // Search & filter
+  const filtered = products.filter((p) => {
+    const s = search.toLowerCase().trim();
+    const matchSearch =
+      !s ||
+      (p.name || '').toLowerCase().includes(s) ||
+      (p.sku || '').toLowerCase().includes(s);
+    const matchCat = !catFilter || p.category === catFilter;
     return matchSearch && matchCat;
   });
-
-  const handleSave = async (formData, id) => {
-    if (id) {
-      await dispatch(updateProduct({ id, formData })).unwrap();
-      toast.success('Product updated');
-    } else {
-      await dispatch(addProduct(formData)).unwrap();
-      toast.success('Product added');
-    }
-  };
 
   const handleDelete = async (id) => {
     await dispatch(deleteProduct(id)).unwrap();
     toast.success('Product deleted');
   };
 
-  const canManage = ['Admin', 'Radnus'].includes(role);
+  const openAdd = () => {
+    setEditTarget(null);
+    setModal(true);
+  };
+  const openEdit = (p) => {
+    setEditTarget(p);
+    setModal(true);
+  };
+
+  // Dynamic category list (unique values)
+  const dynamicCatOptions = [
+    ...Array.from(new Set(products.map((p) => p.category).filter(Boolean))),
+  ];
 
   return (
     <div>
-      <SectionHeader
-        title="Product Catalog"
-        count={filtered.length}
-        action={canManage && <Button variant="primary" size="sm" onClick={() => { setEditTarget(null); setModal(true); }}>+ Add Product</Button>}
-      />
-
-      {/* Filters */}
-      <div className="products-toolbar">
-        <div className="dtable-search" style={{ maxWidth: 300 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products…" />
+      <div className="section-header">
+        <div>
+          <h2 className="section-title">Product Catalog</h2>
+          <span className="section-count">{filtered.length} products</span>
         </div>
-        <select className="field-input field-select" style={{ width: 'auto', padding: '8px 32px 8px 12px' }} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
-          {categories.map(c => <option key={c} value={c}>{c || 'All Categories'}</option>)}
+        {['Admin', 'Radnus'].includes(role) && (
+          <Button variant="primary" size="sm" onClick={openAdd}>
+            <Plus size={16} /> Add Product
+          </Button>
+        )}
+      </div>
+
+      <div className="products-toolbar">
+        <div className="dtable-search" style={{ maxWidth: 320 }}>
+          <Search size={16} />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or SKU…"
+          />
+        </div>
+        {/* ✅ Native select with custom single‑arrow CSS class */}
+        <select
+          className="cat-select"
+          value={catFilter}
+          onChange={(e) => setCatFilter(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          {dynamicCatOptions.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: 60 }}><Spinner size="lg" /></div>
+        <div className="loading-center">
+          <Spinner size="lg" />
+        </div>
       ) : filtered.length === 0 ? (
-        <EmptyState icon={<Package size={40} />} title="No products found" subtitle="Try adjusting your search or add a new product" action={canManage && <Button variant="primary" size="sm" onClick={() => setModal(true)}>+ Add Product</Button>} />
+        <div className="empty-state">
+          <Package size={40} />
+          <p>No products found</p>
+          {['Admin', 'Radnus'].includes(role) && (
+            <Button variant="primary" size="sm" onClick={openAdd}>
+              Add Product
+            </Button>
+          )}
+        </div>
       ) : (
         <div className="products-grid">
-          {filtered.map(p => (
+          {filtered.map((p) => (
             <ProductCard
-              key={p._id} product={p} role={role}
-              onEdit={p => { setEditTarget(p); setModal(true); }}
-              onDelete={id => setDeleteId(id)}
+              key={p._id}
+              product={p}
+              role={role}
+              onEdit={openEdit}
+              onDelete={(id) => setDeleteId(id)}
             />
           ))}
         </div>
       )}
 
-      <ProductModal open={modal} onClose={() => { setModal(false); setEditTarget(null); }} product={editTarget} onSave={handleSave} />
-      <ConfirmDialog open={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => handleDelete(deleteId)} title="Delete Product" message="Are you sure you want to delete this product? This action cannot be undone." confirmLabel="Delete" />
+      <ProductFormModal
+        open={modal}
+        onClose={() => {
+          setModal(false);
+          setEditTarget(null);
+        }}
+        editProduct={editTarget}
+      />
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => handleDelete(deleteId)}
+        title="Delete Product"
+        message="Are you sure you want to delete this product? This action cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   );
 };

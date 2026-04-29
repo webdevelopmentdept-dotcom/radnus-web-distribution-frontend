@@ -128,3 +128,72 @@
   .sidebar { display: none; }
   .shell-content { padding: 16px; }
 }
+
+/* ===== THREE-DOT MENU FOR COLLAPSED SIDEBAR ===== */
+.collapsed-menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.three-dot-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #aaa);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.three-dot-btn:hover {
+  background: var(--bg-card, #2a2a2a);
+  color: var(--text-primary, white);
+}
+
+.three-dot-dropdown {
+  position: absolute;
+  bottom: 50px;          /* appears above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface, #1e1e2f);
+  border: 1px solid var(--border, #2c2c2c);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.three-dot-dropdown .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: var(--text-secondary, #ddd);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.three-dot-dropdown .dropdown-item:hover {
+  background: var(--bg-card, #2c2c2c);
+  color: var(--text-primary, white);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-subtle, #2c2c2c);
+  margin: 6px 0;
+}

@@ -1,0 +1,155 @@
+.activity-log-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  border: none;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-btn.active {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.log-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #f0f0f0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.action-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.product-name {
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.changes-container {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: #fef9e3;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.changes-title {
+  font-weight: 600;
+  color: #b45309;
+  margin-bottom: 0.25rem;
+}
+
+.change-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field {
+  font-weight: 600;
+  color: #374151;
+}
+
+.old {
+  color: #dc2626;
+  text-decoration: line-through;
+}
+
+.new {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.icon-muted {
+  color: #6b7280;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: #9ca3af;
+  padding: 3rem;
+}
+
+.error-message {
+  text-align: center;
+  color: #ef4444;
+  padding: 2rem;
+}
+
+/* ───── NEW SPINNER ───── */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #d32f2f;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

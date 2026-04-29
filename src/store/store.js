@@ -13,6 +13,8 @@ import executiveReducer    from '../services/features/executive/executiveSlice';
 import fseReducer          from '../services/features/fse/fseSlice';
 import customerReducer from '../services/features/customers/customerSlice';
 import invoiceReducer from '../services/features/invoice/invoiceSlice';
+import activityReducer from '../services/features/activity/activitySlice';
+import feedbackReducer from '../services/features/retailer/feedbackSlice';
 
 export const store = configureStore({
   reducer: {
@@ -29,5 +31,7 @@ export const store = configureStore({
     fse:          fseReducer,
     customer: customerReducer,
     invoice: invoiceReducer,
+    activity: activityReducer,
+    feedback: feedbackReducer,
   },
 });

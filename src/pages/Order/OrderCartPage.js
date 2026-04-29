@@ -1,4 +1,3 @@
-// src/pages/Order/OrderCartPage.js
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { fetchInvoices } from '../../services/features/invoice/invoiceSlice';
 import { useTheme } from '../../context/ThemeContext';
 import './OrderCartPage.css';
 
-import { Search, X, Package, Plus, Minus, TrendingUp } from 'lucide-react';
+import { Search, X, Package, ShoppingCart } from 'lucide-react';
 
 const PriceTypeSelector = ({ priceType, onSelectPriceType }) => {
   const options = [
@@ -33,6 +32,7 @@ const PriceTypeSelector = ({ priceType, onSelectPriceType }) => {
 
 const ProductRow = ({ item, onUpdateQty, price }) => {
   const stock = item.currentStock || 0;
+
   return (
     <div className="product-card">
       <div className="product-row">
@@ -43,16 +43,32 @@ const ProductRow = ({ item, onUpdateQty, price }) => {
             <div className="no-image">No Image</div>
           )}
         </div>
+
         <div className="product-info">
           <div className="product-name">{item.name}</div>
-          <div className="product-sku">SKU: {item.sku}</div>
-          <div className="product-price">₹{price.toLocaleString('en-IN')}</div>
-          <div className="product-stock">Stock: {stock} units</div>
+          <div className="product-meta">SKU: {item.sku}</div>
+          <div className="product-meta">Stock: {stock} units</div>
+          <div className="product-price-row">
+            <span className="product-price">₹{price.toLocaleString('en-IN')}</span>
+          </div>
         </div>
+
         <div className="stepper">
-          <button className="qty-btn" onClick={() => onUpdateQty(item.id, 'dec')}>-</button>
+          <button
+            className="qty-btn"
+            onClick={() => onUpdateQty(item.id, 'dec')}
+            disabled={item.qty === 0}
+          >
+            −
+          </button>
           <span className="qty-value">{item.qty}</span>
-          <button className="qty-btn" onClick={() => onUpdateQty(item.id, 'inc')}>+</button>
+          <button
+            className="qty-btn"
+            onClick={() => onUpdateQty(item.id, 'inc')}
+            disabled={item.qty >= stock}
+          >
+            +
+          </button>
         </div>
       </div>
     </div>
@@ -89,7 +105,6 @@ const OrderCartPage = () => {
     loadData();
   }, [dispatch, products, invoices]);
 
-  // Build sold quantities map
   const soldMap = useMemo(() => {
     const map = new Map();
     if (!invoices) return map;
@@ -104,7 +119,6 @@ const OrderCartPage = () => {
     return map;
   }, [invoices]);
 
-  // Initialize cart
   useEffect(() => {
     if (!products?.length) return;
     if (hasInitialized.current) return;
@@ -155,26 +169,29 @@ const OrderCartPage = () => {
     );
   }, [cart, searchQuery]);
 
-  const totalAmount = useMemo(() => {
-    return cart.reduce((sum, item) => {
-      const unitPrice = item[priceType] || 0;
-      return sum + unitPrice * item.qty;
-    }, 0);
-  }, [cart, priceType]);
+  const cartItems = useMemo(() => cart.filter(item => item.qty > 0), [cart]);
+
+  const totalItems = useMemo(() =>
+    cartItems.reduce((sum, item) => sum + item.qty, 0),
+    [cartItems]
+  );
+
+  const totalAmount = useMemo(() =>
+    cartItems.reduce((sum, item) => sum + (item[priceType] || 0) * item.qty, 0),
+    [cartItems, priceType]
+  );
 
   const handlePlaceOrder = () => {
-    const orderedItems = cart
-      .filter(item => item.qty > 0)
-      .map(item => ({
-        id: item.id,
-        name: item.name,
-        qty: item.qty,
-        price: item[priceType] || 0,
-      }));
-    if (orderedItems.length === 0) {
+    if (cartItems.length === 0) {
       alert('Please add at least one item to your order.');
       return;
     }
+    const orderedItems = cartItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      qty: item.qty,
+      price: item[priceType] || 0,
+    }));
     navigate('/order-success', {
       state: {
         cartItems: orderedItems,
@@ -195,58 +212,102 @@ const OrderCartPage = () => {
 
   return (
     <div className={`order-cart-page ${isDark ? 'dark' : ''}`}>
-      <div className="cart-header">
-        <h1>Order Cart</h1>
-      </div>
-
-      <div className="search-section">
-        <div className="search-wrapper">
-          <Search size={18} />
-          <input
-            type="text"
-            placeholder="Search by name or SKU…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="search-clear">
-              <X size={16} />
-            </button>
-          )}
+      {/* Left: Product List */}
+      <div className="cart-main">
+        <div className="cart-header">
+          <h1>
+            My Cart
+            <span className="cart-count-badge">({totalItems})</span>
+          </h1>
         </div>
-        {searchQuery && (
-          <div className="result-count">
-            {filteredCart.length} result{filteredCart.length !== 1 ? 's' : ''} found
+
+        <div className="search-section">
+          <div className="search-wrapper">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search by name or SKU…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="search-clear">
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <div className="result-count">
+              {filteredCart.length} result{filteredCart.length !== 1 ? 's' : ''} found
+            </div>
+          )}
+          <PriceTypeSelector priceType={priceType} onSelectPriceType={setPriceType} />
+        </div>
+
+        <div className="product-grid">
+          {filteredCart.map(product => (
+            <ProductRow
+              key={product.id}
+              item={product}
+              onUpdateQty={updateQty}
+              price={product[priceType] || 0}
+            />
+          ))}
+        </div>
+
+        {filteredCart.length === 0 && (
+          <div className="empty-state">
+            <Package size={48} />
+            <p>No products match "{searchQuery}"</p>
           </div>
         )}
-        <PriceTypeSelector priceType={priceType} onSelectPriceType={setPriceType} />
       </div>
 
-      <div className="product-grid">
-        {filteredCart.map(product => (
-          <ProductRow
-            key={product.id}
-            item={product}
-            onUpdateQty={updateQty}
-            price={product[priceType] || 0}
-          />
-        ))}
-      </div>
-
-      {filteredCart.length === 0 && (
-        <div className="empty-state">
-          <Package size={48} />
-          <p>No products match "{searchQuery}"</p>
+      {/* Right: Order Summary Panel */}
+      <div className="order-summary-panel">
+        <div className="summary-header">
+          <ShoppingCart size={20} />
+          <span>Order Summary</span>
         </div>
-      )}
 
-      <div className="cart-footer">
-        <div className="total-row">
+        <div className="summary-scrollable">
+          {cartItems.length === 0 ? (
+            <div className="summary-empty">No items added yet</div>
+          ) : (
+            cartItems.map(item => (
+              <div className="summary-item" key={item.id}>
+                <div className="summary-item-name">{item.name}</div>
+                <div className="summary-item-right">
+                  <span className="summary-item-qty">×{item.qty}</span>
+                  <span className="summary-item-price">
+                    ₹{((item[priceType] || 0) * item.qty).toLocaleString('en-IN')}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="summary-divider" />
+
+        <div className="summary-row subtotal">
+          <span>Subtotal ({totalItems} item{totalItems !== 1 ? 's' : ''})</span>
+          <span>₹{totalAmount.toLocaleString('en-IN')}</span>
+        </div>
+
+        <div className="summary-divider" />
+
+        <div className="summary-row grand-total">
           <span>Total</span>
-          <span className="total-amount">₹{totalAmount.toLocaleString('en-IN')}</span>
+          <span>₹{totalAmount.toLocaleString('en-IN')}</span>
         </div>
-        <button className="place-order-btn" onClick={handlePlaceOrder}>
+
+        <button
+          className="place-order-btn"
+          onClick={handlePlaceOrder}
+          disabled={cartItems.length === 0}
+        >
           PLACE ORDER
         </button>
       </div>

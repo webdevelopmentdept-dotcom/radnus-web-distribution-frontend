@@ -1,0 +1,77 @@
+/* FeedbackPage.css */
+.feedback-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 100%;
+}
+
+.feedback-card {
+  background: var(--card-bg, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  width: 100%;
+  max-width: 560px;
+}
+
+.feedback-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.feedback-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.feedback-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  resize: vertical;
+  background: var(--input-bg, #f9fafb);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: var(--primary, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.feedback-char-count {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.feedback-submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary, #2563eb);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.feedback-submit-btn:hover:not(:disabled) {
+  background: var(--primary-hover, #1d4ed8);
+}
+
+.feedback-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
