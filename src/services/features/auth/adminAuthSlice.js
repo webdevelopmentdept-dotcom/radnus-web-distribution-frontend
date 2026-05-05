@@ -117,7 +117,7 @@
 // export const { clearError } = adminAuthSlice.actions;
 // export default adminAuthSlice.reducer;
 
-//----------------------------------
+//----------------- New code-----------------
 
 // src/services/features/auth/adminAuthSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';

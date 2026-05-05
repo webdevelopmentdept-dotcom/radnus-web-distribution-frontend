@@ -171,7 +171,7 @@
 // export const { logout, clearError, clearRegisterSuccess } = authSlice.actions;
 // export default authSlice.reducer;
 
-//----------------------------
+//-------------New code---------------
 
 // src/services/features/auth/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
