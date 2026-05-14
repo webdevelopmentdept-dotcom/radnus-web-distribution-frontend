@@ -18,13 +18,15 @@ import {
   Loader,
 } from 'lucide-react';
 
-// Helper functions (unchanged)
+// Helper functions
+// ✅ Updated formatValue to show full comma‑formatted amounts (e.g., 27,900.00)
 const formatValue = (num) => {
   const value = Number(num);
   if (isNaN(value) || value === undefined) return '₹0';
-  if (value >= 100000) return `₹${(value / 100000).toFixed(2)}L`;
-  if (value >= 1000) return `₹${(value / 1000).toFixed(1)}K`;
-  return `₹${value.toFixed(2)}`;
+  return `₹${value.toLocaleString('en-IN', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })}`;
 };
 
 const parseDate = (dateValue) => {
@@ -143,47 +145,30 @@ const CentralStockPage = () => {
     setRefreshing(false);
   };
 
-  // ✅ LIVE STOCK CALCULATION – subtract sold quantities from invoices
+  // ✅ LIVE STOCK – use product's stock/moq directly (no double deduction)
   const stockMap = useMemo(() => {
     if (!products.length) return {};
 
-    // First create a map of productId -> total sold quantity
-    const soldMap = {};
-    invoices.forEach(invoice => {
-      (invoice.items || []).forEach(item => {
-        const productId = getId(item.productId);
-        if (productId) {
-          const qty = getNum(item, 'qty', 0);
-          soldMap[productId] = (soldMap[productId] || 0) + qty;
-        }
-      });
-    });
-
-    // Build stock map with current stock = moq - sold
     const stock = {};
     products.forEach(product => {
       const pid = getId(product._id);
       const moq = getNum(product, 'moq', 0);
-      const sold = soldMap[pid] || 0;
-      const currentStock = Math.max(0, moq - sold);
+      const currentStock = getNum(product, 'stock') || moq; // backend live stock
 
       stock[pid] = {
         ...product,
         currentStock,
-        totalOutward: sold,
-        walkinPrice: getNum(product, 'walkinPrice'),
         moq,
+        walkinPrice: getNum(product, 'walkinPrice'),
         name: getStr(product, 'name'),
         sku: getStr(product, 'sku'),
         rackNo: getStr(product, 'rackNo'),
         batchNo: getStr(product, 'batchNo'),
       };
     });
-
     return stock;
-  }, [products, invoices]); // ✅ depends on both products and invoices
+  }, [products]);
 
-  // Overview data (product list with live current stock)
   const overviewData = useMemo(() => {
     return Object.values(stockMap).map(item => ({
       id: getId(item._id),
@@ -197,13 +182,12 @@ const CentralStockPage = () => {
     }));
   }, [stockMap]);
 
-  // Inward transactions – product creation (initial stock addition)
   const inwardData = useMemo(() => {
     if (!products.length) return [];
     return products
       .map(product => {
         const createdAt = parseDate(product.createdAt);
-        const qty = getNum(product, 'moq'); // initial stock added
+        const qty = getNum(product, 'moq');
         const price = getNum(product, 'walkinPrice');
         return {
           id: `inward_${getId(product._id)}`,
@@ -222,7 +206,6 @@ const CentralStockPage = () => {
       .sort((a, b) => b._createdAt - a._createdAt);
   }, [products]);
 
-  // Outward transactions – invoice items (sales)
   const outwardData = useMemo(() => {
     if (!invoices.length) return [];
     const outward = [];
@@ -292,23 +275,18 @@ const CentralStockPage = () => {
         </button>
       </div>
 
-      {/* Tabs */}
       <div className="stock-tabs">
         {['OVERVIEW', 'INWARD', 'OUTWARD'].map(t => (
           <button
             key={t}
             className={`tab-btn ${tab === t ? 'active' : ''}`}
-            onClick={() => {
-              setTab(t);
-              setTimeFilter('all');
-            }}
+            onClick={() => { setTab(t); setTimeFilter('all'); }}
           >
             {t.charAt(0) + t.slice(1).toLowerCase()}
           </button>
         ))}
       </div>
 
-      {/* Time filter (only for history tabs) */}
       {(tab === 'INWARD' || tab === 'OUTWARD') && (
         <div className="time-filters">
           {[
@@ -324,41 +302,23 @@ const CentralStockPage = () => {
                 className={`time-filter-btn ${timeFilter === filter.key ? 'active' : ''}`}
                 onClick={() => setTimeFilter(filter.key)}
               >
-                <Icon size={14} />
-                <span>{filter.label}</span>
+                <Icon size={14} /> <span>{filter.label}</span>
               </button>
             );
           })}
         </div>
       )}
 
-      {/* Overview Tab */}
       {tab === 'OVERVIEW' && (
         <>
           <div className="total-card">
             <div className="total-value">{formatValue(totalValue)}</div>
             <div className="total-label">Total Stock Value (Walkin Price)</div>
             <div className="summary-row">
-              <div className="summary-item">
-                <Boxes size={16} />
-                <span>Products</span>
-                <strong>{summaryStats.totalProducts}</strong>
-              </div>
-              <div className="summary-item">
-                <BarChart3 size={16} />
-                <span>Units</span>
-                <strong>{summaryStats.totalUnits}</strong>
-              </div>
-              <div className="summary-item">
-                <TrendingDown size={16} />
-                <span>Sold</span>
-                <strong>{summaryStats.totalSold}</strong>
-              </div>
-              <div className="summary-item">
-                <TrendingUp size={16} />
-                <span>Added</span>
-                <strong>{summaryStats.totalAdded}</strong>
-              </div>
+              <div className="summary-item"><Boxes size={16} /><span>Products</span><strong>{summaryStats.totalProducts}</strong></div>
+              <div className="summary-item"><BarChart3 size={16} /><span>Units</span><strong>{summaryStats.totalUnits}</strong></div>
+              <div className="summary-item"><TrendingDown size={16} /><span>Sold</span><strong>{summaryStats.totalSold}</strong></div>
+              <div className="summary-item"><TrendingUp size={16} /><span>Added</span><strong>{summaryStats.totalAdded}</strong></div>
             </div>
           </div>
 
@@ -369,9 +329,7 @@ const CentralStockPage = () => {
               return (
                 <div key={product.id} className="stock-card">
                   <div className="card-header-row">
-                    <div className="icon-circle">
-                      <Package size={20} color="#D32F2F" />
-                    </div>
+                    <div className="icon-circle"><Package size={20} color="#D32F2F" /></div>
                     <div className="product-info">
                       <div className="product-name">{product.name}</div>
                       <div className="product-sku">SKU: {product.sku}</div>
@@ -382,18 +340,9 @@ const CentralStockPage = () => {
                     </div>
                   </div>
                   <div className="card-details">
-                    <div className="detail-row">
-                      <span>Current Stock:</span>
-                      <strong>{product.qty} units</strong>
-                    </div>
-                    <div className="detail-row">
-                      <span>Total Stock Value:</span>
-                      <strong>{formatValue((product.qty || 0) * (product.walkinPrice || 0))}</strong>
-                    </div>
-                    <div className="detail-row">
-                      <span>Price/Unit:</span>
-                      <strong>{formatValue(product.walkinPrice)}</strong>
-                    </div>
+                    <div className="detail-row"><span>Current Stock:</span><strong>{product.qty} units</strong></div>
+                    <div className="detail-row"><span>Total Stock Value:</span><strong>{formatValue((product.qty || 0) * (product.walkinPrice || 0))}</strong></div>
+                    <div className="detail-row"><span>Price/Unit:</span><strong>{formatValue(product.walkinPrice)}</strong></div>
                   </div>
                 </div>
               );
@@ -403,7 +352,6 @@ const CentralStockPage = () => {
         </>
       )}
 
-      {/* Inward Tab */}
       {tab === 'INWARD' && (
         <div className="history-list">
           {filteredInward.map(item => (
@@ -412,9 +360,7 @@ const CentralStockPage = () => {
                 <TrendingUp size={20} color="#2E7D32" />
                 <div className="history-info">
                   <div className="history-name">{item.name}</div>
-                  <div className="history-meta">
-                    Stock Added • {item.date} at {item.time}
-                  </div>
+                  <div className="history-meta">Stock Added • {item.date} at {item.time}</div>
                   <div className="history-note">{item.note}</div>
                 </div>
                 <div className="history-stats">
@@ -428,17 +374,12 @@ const CentralStockPage = () => {
           {filteredInward.length === 0 && (
             <div className="empty-state">
               <p>{timeFilter === 'all' ? 'No inward records yet' : `No records for ${timeFilter}`}</p>
-              <small>
-                {timeFilter === 'all'
-                  ? 'When you add new products, they will appear here'
-                  : 'Try changing the time filter to see more records'}
-              </small>
+              <small>{timeFilter === 'all' ? 'When you add new products, they will appear here' : 'Try changing the time filter to see more records'}</small>
             </div>
           )}
         </div>
       )}
 
-      {/* Outward Tab */}
       {tab === 'OUTWARD' && (
         <div className="history-list">
           {filteredOutward.map(item => (
@@ -447,16 +388,10 @@ const CentralStockPage = () => {
                 <TrendingDown size={20} color="#D32F2F" />
                 <div className="history-info">
                   <div className="history-name">{item.name}</div>
-                  <div className="history-meta">
-                    Stock Removed • {item.date} at {item.time}
-                  </div>
+                  <div className="history-meta">Stock Removed • {item.date} at {item.time}</div>
                   <div className="history-note">{item.note}</div>
-                  {item.invoiceNumber && item.invoiceNumber !== 'N/A' && (
-                    <div className="history-meta">Invoice: {item.invoiceNumber}</div>
-                  )}
-                  {item.paymentMode && item.paymentMode !== 'N/A' && (
-                    <div className="history-meta">Payment: {item.paymentMode}</div>
-                  )}
+                  {item.invoiceNumber && item.invoiceNumber !== 'N/A' && <div className="history-meta">Invoice: {item.invoiceNumber}</div>}
+                  {item.paymentMode && item.paymentMode !== 'N/A' && <div className="history-meta">Payment: {item.paymentMode}</div>}
                 </div>
                 <div className="history-stats">
                   <div className="history-qty outward">-{item.qty} units</div>
@@ -469,11 +404,7 @@ const CentralStockPage = () => {
           {filteredOutward.length === 0 && (
             <div className="empty-state">
               <p>{timeFilter === 'all' ? 'No outward records yet' : `No records for ${timeFilter}`}</p>
-              <small>
-                {timeFilter === 'all'
-                  ? 'When you create invoices and sell products, they will appear here'
-                  : 'Try changing the time filter to see more records'}
-              </small>
+              <small>{timeFilter === 'all' ? 'When you create invoices and sell products, they will appear here' : 'Try changing the time filter to see more records'}</small>
             </div>
           )}
         </div>
