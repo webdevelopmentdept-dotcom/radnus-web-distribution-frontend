@@ -42,7 +42,7 @@ const SALESPERSONS = [
   { id: 5, name: 'MOHANA AMBIGAI' },
   { id: 6, name: 'KALAIVANI' },
   { id: 7, name: 'SUNDER SIR' },
-  { id: 8, name: 'Direct WalkIn' },
+  { id: 8, name: 'PAVITHRA' },
 ];
 
 const PAYMENT_MODES = [
