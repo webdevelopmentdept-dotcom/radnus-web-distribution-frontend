@@ -698,6 +698,7 @@ const SALESPERSONS = [
   { id: 6, name: 'KALAIVANI' },
   { id: 7, name: 'SUNDER SIR' },
   { id: 8, name: 'PAVITHRA' },
+  { id: 9, name: 'SARANYA' },
 ];
 
 const PAYMENT_MODES = [
