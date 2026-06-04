@@ -546,6 +546,7 @@ const CAT_OPTS = [
   { value: '', label: 'Select Category' },
   { value: 'PD Chargers & Car Chargers', label: 'PD Chargers & Car Chargers' },
   { value: 'Charger', label: 'Charger' },
+  { value: 'Adapter', label: 'Adapter' },
   { value: 'Data Cables', label: 'Data Cables' },
   { value: 'Handsfree', label: 'Handsfree' },
   { value: 'Bluetooth Neckband', label: 'Bluetooth Neckband' },
