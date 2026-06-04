@@ -541,6 +541,7 @@ import {
 } from '../../components/ui/UI';
 import './Products.css';
 
+
 /* ─── Category & Status options ─── */
 const CAT_OPTS = [
   { value: '', label: 'Select Category' },
@@ -553,6 +554,8 @@ const CAT_OPTS = [
   { value: 'Ear Buds', label: 'Ear Buds' },
   { value: 'Speakers', label: 'Speakers' },
   { value: 'Radnus Battery', label: 'Radnus Battery' },
+  { value: 'Connector', label: 'Connector' },
+  { value: 'Tools', label: 'Tools' },
 ];
 
 const STATUS_OPTS = [
