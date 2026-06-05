@@ -710,6 +710,7 @@ const PAYMENT_MODES = [
   { id: 2, label: 'GPay' },
   { id: 3, label: 'Credit Card' },
   { id: 4, label: 'Debit Card' },
+  { id: 5, label: 'Office Use' },
 ];
 
 const formatDate = (iso) => new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });

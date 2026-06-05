@@ -32,6 +32,7 @@ import {
   AlertTriangle,
   RotateCcw,
   PackageX,
+  Download,
 } from "lucide-react";
 
 const ROLE_NAV = {
@@ -53,6 +54,7 @@ const ROLE_NAV = {
     { path: "/purchase-return", label: "Purchase Return", icon: PackageX },
     { path: "/reports", label: "Reports", icon: BarChart3 },
     { path: "/profile", label: "Profile", icon: Settings },
+    {path: "/excel-export",label: "Excel Export",icon: Download},
   ],
   Radnus: [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -67,6 +69,7 @@ const ROLE_NAV = {
     { path: "/purchase-return", label: "Purchase Return", icon: PackageX },
     { path: "/reports", label: "Reports", icon: BarChart3 },
     { path: "/profile", label: "Profile", icon: Settings },
+    {path: "/excel-export",label: "Excel Export",icon: Download},
   ],
   Distributor: [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -120,7 +123,13 @@ const ROLE_NAV = {
   ],
 };
 
-const Sidebar = ({ user, collapsed, onCollapse, mobileOpen, onMobileClose }) => {
+const Sidebar = ({
+  user,
+  collapsed,
+  onCollapse,
+  mobileOpen,
+  onMobileClose,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
@@ -161,7 +170,9 @@ const Sidebar = ({ user, collapsed, onCollapse, mobileOpen, onMobileClose }) => 
 
   return (
     <>
-      <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""} ${mobileOpen ? "sidebar-mobile-open" : ""}`}>
+      <aside
+        className={`sidebar ${collapsed ? "sidebar-collapsed" : ""} ${mobileOpen ? "sidebar-mobile-open" : ""}`}
+      >
         <div className="sidebar-header">
           {!collapsed && (
             <div className="sidebar-brand">
@@ -181,9 +192,20 @@ const Sidebar = ({ user, collapsed, onCollapse, mobileOpen, onMobileClose }) => 
         {!collapsed && (
           <div className="sidebar-user">
             <div className="sb-avatar">
-              {user?.profileImage || user?.photo
-                ? <img src={user.profileImage || user.photo} alt={user?.name || 'User'} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                : initials}
+              {user?.profileImage || user?.photo ? (
+                <img
+                  src={user.profileImage || user.photo}
+                  alt={user?.name || "User"}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+              ) : (
+                initials
+              )}
             </div>
             <div className="sb-user-info">
               <span className="sb-user-name">{user?.name || "User"}</span>
@@ -289,10 +311,16 @@ const Sidebar = ({ user, collapsed, onCollapse, mobileOpen, onMobileClose }) => 
               <p>Are you sure you want to sign out?</p>
             </div>
             <div className="modal-footer">
-              <button className="modal-btn modal-btn-cancel" onClick={cancelLogout}>
+              <button
+                className="modal-btn modal-btn-cancel"
+                onClick={cancelLogout}
+              >
                 Cancel
               </button>
-              <button className="modal-btn modal-btn-confirm" onClick={confirmLogout}>
+              <button
+                className="modal-btn modal-btn-confirm"
+                onClick={confirmLogout}
+              >
                 OK
               </button>
             </div>

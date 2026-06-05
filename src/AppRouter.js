@@ -48,6 +48,7 @@ import FeedbackPage from "./pages/Feedback/FeedbackPage";
 import AdminFeedbackPage from "./pages/Feedback/AdminFeedbackPage";
 import SalesReturnPage from "./pages/Returns/SalesReturnPage";
 import PurchaseReturnPage from "./pages/Returns/PurchaseReturnPage";
+import ExcelExportScreen from "./pages/Reports/ExcelExportScreen";
 import {
   DistributorsPage,
   TerritoryPage,
@@ -82,6 +83,7 @@ const ROLE_ROUTES = {
     "admin-feedback",
     "sales-return",
     "purchase-return",
+    "excel-export",
   ],
   Radnus: [
     "dashboard",
@@ -101,6 +103,7 @@ const ROLE_ROUTES = {
     "feedback",
     "sales-return",
     "purchase-return",
+    "excel-export",
   ],
   Distributor: [
     "dashboard",
@@ -421,7 +424,7 @@ const AppRouterInner = () => {
               </ProtectedRoute>
             }
           />
-{/* 
+          {/* 
           <Route
             path="/feedback"
             element={
@@ -432,6 +435,18 @@ const AppRouterInner = () => {
               </ProtectedRoute>
             }
           /> */}
+
+          <Route
+            path="/excel-export"
+            element={
+              <ProtectedRoute>
+                <RolePage routeKey="excel-export">
+                  <ExcelExportScreen />
+                </RolePage>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/customers"
             element={

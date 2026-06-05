@@ -1280,7 +1280,7 @@ const InvoicePage = () => {
               RADNUS COMMUNICATION
             </h2>
             <p style={{ ...S.text, margin: "2px 0", fontSize: "0.75rem" }}>
-              No.242/244, MG Road, Sinnaya Plaza, Near Fish Market
+              No.242/244, MG Road, Sinnaya Plaza, Near KFC Chicken
             </p>
             <p style={{ ...S.text, margin: "2px 0", fontSize: "0.75rem" }}>
               Puducherry - 605001 &nbsp;|&nbsp; State Name: Puducherry, Code: 605001
