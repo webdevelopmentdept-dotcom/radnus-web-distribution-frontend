@@ -711,6 +711,7 @@ const PAYMENT_MODES = [
   { id: 3, label: "Credit Card" },
   { id: 4, label: "Debit Card" },
   { id: 5, label: "Office Use" },
+  { id: 6, label: "Loan Amount" },
 ];
 
 const formatDate = (iso) =>
