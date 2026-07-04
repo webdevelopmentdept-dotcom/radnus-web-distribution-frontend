@@ -350,8 +350,8 @@ const RadnusDashboard = () => {
       <div className="stats-grid">
         <StatCard icon={<IndianRupee size={20} />} label="Today Sales" value={todaySalesLoading ? '...' : `₹${todaySales.toLocaleString('en-IN')}`} accent="green" onClick={() => navigate('/invoices', { state: { filter: 'today' } })} />
         <StatCard icon={<Coins size={20} />} label="Item Cost Total" value={itemCostLoading ? '...' : `₹${Math.round(totalItemCostValue).toLocaleString('en-IN')}`} accent="yellow" onClick={() => navigate('/stock-visibility')} />
-        <StatCard icon={<TrendingUp size={20} />} label="Inward (Today)" value={inwardOutwardLoading ? '...' : `${totalInward} units`} accent="green" onClick={() => navigate('/central-stock')} />
-        <StatCard icon={<TrendingDown size={20} />} label="Outward (Today)" value={inwardOutwardLoading ? '...' : `${totalOutward} units`} accent="red" onClick={() => navigate('/invoices', { state: { filter: 'today' } })} />
+        <StatCard icon={<TrendingUp size={20} />} label="Inward" value={inwardOutwardLoading ? '...' : `${totalInward} units`} accent="green" onClick={() => navigate('/central-stock')} />
+        <StatCard icon={<TrendingDown size={20} />} label="Outward" value={inwardOutwardLoading ? '...' : `${totalOutward} units`} accent="red" onClick={() => navigate('/invoices', { state: { filter: 'today' } })} />
       </div>
 
       <SectionHeader title="Quick Actions" />
