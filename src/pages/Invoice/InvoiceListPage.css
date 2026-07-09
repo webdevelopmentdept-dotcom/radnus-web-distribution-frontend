@@ -1,4 +1,876 @@
-/* InvoiceListPage.css — uses global theme vars from index.css */
+/* InvoiceListPage.css — Complete Fixed Version */
+
+.invoice-page {
+  padding: 2rem;
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===== Page Header ===== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-left h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--red) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.invoice-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--bg-surface);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-btn.spinning svg {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ===== Search & Filters ===== */
+.search-filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  gap: 0.75rem;
+  transition: all 0.3s;
+  min-width: 250px;
+}
+
+.search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  padding: 0.25rem 0;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  transition: border-color 0.3s;
+}
+
+.sort-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.sort-select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* ===== Search Results Info ===== */
+.search-results-info {
+  margin: -0.5rem 0 1rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-surface);
+  border-radius: 0.5rem;
+  border-left: 4px solid var(--red);
+}
+
+.search-results-info strong {
+  color: var(--text-primary);
+}
+
+/* ===== Tabs ===== */
+.invoice-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.25rem;
+  background: var(--bg-surface);
+  border-radius: 1rem;
+  border: 1px solid var(--border-subtle);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.tab-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+}
+
+.tab-btn.active:hover {
+  background: var(--red-dark);
+}
+
+.tab-btn svg {
+  flex-shrink: 0;
+}
+
+.tab-badge {
+  background: rgba(0,0,0,0.06);
+  padding: 0.1rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.tab-btn.active .tab-badge {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+/* ===== Grid ===== */
+.invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ===== Invoice Card ===== */
+.invoice-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.invoice-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--red);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.invoice-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Header Top */
+.card-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.invoice-number-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle);
+}
+
+.invoice-number-badge svg {
+  color: var(--text-muted);
+}
+
+.invoice-date {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.invoice-date svg {
+  width: 14px;
+  height: 14px;
+}
+
+.invoice-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--red);
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-surface);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Card Body */
+.card-body {
+  margin-bottom: 1rem;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: var(--bg-surface);
+  border-radius: 0.75rem;
+}
+
+.customer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.customer-avatar svg {
+  width: 20px;
+  height: 20px;
+}
+
+.customer-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shop-name {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.payment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.biller-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.biller-label {
+  color: var(--text-secondary);
+}
+
+.biller-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Highlight matches */
+.highlight-match {
+  background: #FFE082;
+  color: #000;
+  padding: 0 0.15rem;
+  border-radius: 0.2rem;
+  font-weight: 600;
+}
+
+/* ===== Loading, Error, Empty States ===== */
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.loading-state p,
+.error-state p,
+.empty-state p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.loading-state h3,
+.empty-state h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-retry,
+.btn-clear-search {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-retry:hover,
+.btn-clear-search:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.btn-clear-search {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-clear-search:hover {
+  background: var(--bg-hover);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ============================================
+   LIGHT MODE - RED BORDERS & RED ACTIVE TABS
+   ============================================ */
+
+/* Force all borders to red in light mode */
+.invoice-page:not(.dark) {
+  --border-subtle: #e53935 !important;
+}
+
+/* Card borders - Light Mode */
+.invoice-page:not(.dark) .invoice-card {
+  border-color: rgba(229, 57, 53, 0.2) !important;
+}
+
+.invoice-page:not(.dark) .invoice-card:hover {
+  border-color: #e53935 !important;
+  box-shadow: 0 12px 40px rgba(229, 57, 53, 0.08) !important;
+}
+
+/* Active Tabs - Light Mode (FIXED TO RED) */
+.invoice-page:not(.dark) .tab-btn.active {
+  background: #e53935 !important; 
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25) !important;
+}
+
+.invoice-page:not(.dark) .tab-btn.active:hover {
+  background: #c62828 !important;
+}
+
+.invoice-page:not(.dark) .tab-btn.active .tab-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+/* Search & Sort borders - Light Mode */
+.invoice-page:not(.dark) .search-wrapper {
+  border-color: rgba(229, 57, 53, 0.2) !important;
+}
+
+.invoice-page:not(.dark) .search-wrapper:focus-within {
+  border-color: #e53935 !important;
+  box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.1) !important;
+}
+
+.invoice-page:not(.dark) .sort-wrapper {
+  border-color: rgba(229, 57, 53, 0.2) !important;
+}
+
+.invoice-page:not(.dark) .sort-wrapper:focus-within {
+  border-color: #e53935 !important;
+  box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.1) !important;
+}
+
+/* Tabs container border - Light Mode */
+.invoice-page:not(.dark) .invoice-tabs {
+  border-color: rgba(229, 57, 53, 0.15) !important;
+}
+
+/* Invoice number badge - Light Mode */
+.invoice-page:not(.dark) .invoice-number-badge {
+  border-color: rgba(229, 57, 53, 0.15) !important;
+}
+
+/* Invoice amount - Light Mode */
+.invoice-page:not(.dark) .invoice-amount {
+  border-color: rgba(229, 57, 53, 0.15) !important;
+}
+
+/* Count badge - Light Mode */
+.invoice-page:not(.dark) .invoice-count {
+  border: 1px solid rgba(229, 57, 53, 0.15) !important;
+}
+
+/* Refresh button - Light Mode */
+.invoice-page:not(.dark) .refresh-btn {
+  border: 1px solid rgba(229, 57, 53, 0.15) !important;
+}
+
+.invoice-page:not(.dark) .refresh-btn:hover:not(:disabled) {
+  border-color: #e53935 !important;
+}
+
+/* Card footer - Light Mode */
+.invoice-page:not(.dark) .card-footer {
+  border-top-color: rgba(229, 57, 53, 0.08) !important;
+}
+
+/* Clear search button - Light Mode */
+.invoice-page:not(.dark) .btn-clear-search {
+  border-color: rgba(229, 57, 53, 0.15) !important;
+}
+
+/* Payment badge - Light Mode */
+.invoice-page:not(.dark) .payment-badge {
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Search results info border - Light Mode */
+.invoice-page:not(.dark) .search-results-info {
+  border-left-color: #e53935 !important;
+}
+
+/* ============================================
+   DARK MODE - SUBTLE GRAY BORDERS & RED TABS
+   ============================================ */
+.dark {
+  /* Let it inherit the default dark theme subtle border */
+}
+
+.dark .invoice-card {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-card);
+}
+
+.dark .invoice-card:hover {
+  border-color: rgba(255, 107, 107, 0.3) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .invoice-card::before {
+  background: linear-gradient(90deg, #FF6B6B, #FF9A9E) !important;
+}
+
+.dark .search-wrapper,
+.dark .sort-wrapper {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-card);
+}
+
+.dark .search-wrapper:focus-within,
+.dark .sort-wrapper:focus-within {
+  border-color: #FF6B6B !important;
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.08) !important;
+}
+
+.dark .invoice-tabs {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-surface);
+}
+
+.dark .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.dark .tab-btn.active {
+  background: var(--red) !important;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3) !important;
+}
+
+.dark .tab-badge {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .tab-btn.active .tab-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .invoice-number-badge {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-surface);
+}
+
+.dark .invoice-amount {
+  border-color: rgba(255, 107, 107, 0.15) !important;
+  background: var(--bg-surface);
+}
+
+.dark .customer-info {
+  background: var(--bg-surface);
+}
+
+.dark .card-footer {
+  border-top-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.dark .invoice-count {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-surface);
+}
+
+.dark .refresh-btn {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-surface);
+}
+
+.dark .refresh-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 107, 107, 0.3) !important;
+}
+
+.dark .search-results-info {
+  background: var(--bg-surface);
+  border-left-color: #FF6B6B !important;
+}
+
+.dark .highlight-match {
+  background: #FFB300 !important;
+  color: #000 !important;
+}
+
+.dark .payment-badge {
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.dark .sort-select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.dark .btn-clear-search {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-surface);
+}
+
+.dark .btn-clear-search:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .customer-avatar {
+  background: linear-gradient(135deg, #FF6B6B, #FF9A9E) !important;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1024px) {
+  .invoice-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .invoice-page {
+    padding: 1rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-filters-section {
+    flex-direction: column;
+  }
+
+  .search-wrapper {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .sort-wrapper {
+    width: 100%;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
+
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-tabs {
+    gap: 0.25rem;
+    padding: 0.25rem;
+    flex-wrap: nowrap;
+  }
+
+  .tab-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    flex: 0 0 auto;
+  }
+
+  .tab-btn span:not(.tab-badge) {
+    display: none;
+  }
+
+  .tab-btn svg {
+    margin: 0;
+  }
+
+  .search-results-info {
+    font-size: 0.8rem;
+  }
+
+  .invoice-card {
+    padding: 1rem;
+  }
+
+  .invoice-amount {
+    font-size: 1.25rem;
+  }
+
+  .customer-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .customer-avatar svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoice-page {
+    padding: 0.75rem;
+  }
+
+  .header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .refresh-btn {
+    justify-content: center;
+  }
+
+  .invoice-card {
+    padding: 0.875rem;
+  }
+
+  .card-header-top {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .invoice-amount {
+    align-self: flex-start;
+    font-size: 1.1rem;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .payment-badge {
+    justify-content: center;
+  }
+
+  .biller-info {
+    justify-content: center;
+  }
+}
+
+/* Scrollbar Styling */
+.invoice-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.invoice-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.invoice-tabs::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
+}
+
+.invoice-tabs::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Dark mode scrollbar */
+.dark .invoice-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .invoice-tabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 
 .invoice-page {
   padding: 2rem;
   min-height: 100vh;
@@ -54,7 +926,7 @@
   color: var(--text-secondary);
 }
 
-/* Tabs */
+
 .invoice-tabs {
   display: flex;
   gap: 0.5rem;
@@ -95,7 +967,7 @@
   color: white;
 }
 
-/* Grid */
+
 .invoice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -184,4 +1056,4 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-}
+} */
