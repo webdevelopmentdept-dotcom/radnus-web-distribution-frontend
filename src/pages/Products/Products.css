@@ -516,3 +516,24 @@
   color: var(--text-muted);
   gap: 12px;
 }
+
+/* ---------------------- */
+
+/* Hide number input arrows/spinners and prevent keyboard increment/decrement */
+.field-input.no-spinner::-webkit-outer-spin-button,
+.field-input.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field-input.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield; /* Standard */
+}
+
+/* Additional styling to ensure consistent appearance */
+.field-input.no-spinner {
+  /* Remove any default number input styling */
+  -webkit-appearance: none;
+  appearance: none;
+}
