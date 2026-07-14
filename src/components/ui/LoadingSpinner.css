@@ -1,0 +1,152 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 2rem;
+  width: 100%;
+}
+
+.loading-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.spinner-ring {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 8px solid transparent;
+  border-top: 8px solid #dc3545;
+  border-radius: 50%;
+  animation: spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  top: 0;
+  left: 0;
+}
+
+.spinner-ring:nth-child(1) {
+  animation-delay: 0s;
+  border-top-color: #dc3545;
+}
+
+.spinner-ring:nth-child(2) {
+  animation-delay: 0.2s;
+  border-top-color: #dc3545;
+  border-width: 6px;
+  width: 60px;
+  height: 60px;
+  top: 10px;
+  left: 10px;
+}
+
+.spinner-ring:nth-child(3) {
+  animation-delay: 0.4s;
+  border-top-color: #dc3545;
+  border-width: 4px;
+  width: 40px;
+  height: 40px;
+  top: 20px;
+  left: 20px;
+}
+
+.spinner-ring:nth-child(4) {
+  animation-delay: 0.6s;
+  border-top-color: #dc3545;
+  border-width: 2px;
+  width: 20px;
+  height: 20px;
+  top: 30px;
+  left: 30px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-message {
+  color: var(--text-secondary, #6c757d);
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Dark mode support - uses your theme variables */
+.dark .loading-message {
+  color: #adb5bd;
+}
+
+.dark .spinner-ring {
+  border-top-color: #ff6b6b;
+}
+
+.dark .spinner-ring:nth-child(1) {
+  border-top-color: #ff6b6b;
+}
+
+.dark .spinner-ring:nth-child(2) {
+  border-top-color: #ff6b6b;
+}
+
+.dark .spinner-ring:nth-child(3) {
+  border-top-color: #ff6b6b;
+}
+
+.dark .spinner-ring:nth-child(4) {
+  border-top-color: #ff6b6b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loading-spinner {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .spinner-ring {
+    width: 60px;
+    height: 60px;
+    border-width: 6px;
+  }
+  
+  .spinner-ring:nth-child(2) {
+    width: 45px;
+    height: 45px;
+    top: 7.5px;
+    left: 7.5px;
+    border-width: 4.5px;
+  }
+  
+  .spinner-ring:nth-child(3) {
+    width: 30px;
+    height: 30px;
+    top: 15px;
+    left: 15px;
+    border-width: 3px;
+  }
+  
+  .spinner-ring:nth-child(4) {
+    width: 15px;
+    height: 15px;
+    top: 22.5px;
+    left: 22.5px;
+    border-width: 1.5px;
+  }
+}
