@@ -42,6 +42,7 @@ const CAT_OPTS = [
   { value: 'Connector', label: 'Connector' },
   { value: 'Tools', label: 'Tools' },
   { value: 'Battery', label: 'Battery' },
+  { value: 'Power Bank', label: 'Power Bank' },
 ];
 
 const STATUS_OPTS = [
